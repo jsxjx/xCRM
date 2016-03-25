@@ -4,6 +4,5 @@ mysql-python
 redis==2.10.3
 Pillow==3.0.0
 xlwt==1.0.0
-MySQL-python==1.2.5
 elasticsearch==2.1.0
 pickleshare==0.5
