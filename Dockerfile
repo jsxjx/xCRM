@@ -1,5 +1,6 @@
 FROM daocloud.io/python:2.7
 ADD requirements.txt /tmp/requirements.txt
+RUN apt-get install -y nginx
 RUN pip install -r /tmp/requirements.txt
 RUN mkdir /code
 WORKDIR /code
