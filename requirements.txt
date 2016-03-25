@@ -1,4 +1,4 @@
-django==1.9.4
+django==1.8.6
 gunicorn==19.3.0
 mysql-python
 redis==2.10.3
