@@ -150,7 +150,7 @@ DEFAULT_CHARSET = 'utf-8'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/crm/crmstatic/'
+STATIC_URL = '/crmstatic/'
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "crmstatic"),
@@ -163,4 +163,9 @@ SESSION_COOKIE_AGE = 60*30
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_SAVE_EVERY_REQUEST = True
 
-CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+#CACHE_BACKEND = 'memcached://127.0.0.1:11211/'
+
+try:
+    from .local_settings import *
+except ImportError:
+    pass

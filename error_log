@@ -10,3 +10,7 @@ INFO 2016-03-25 16:31:58,065 common.py initialized
 INFO 2016-03-25 16:31:58,065 phrase_cache initialized None
 INFO 2016-03-25 16:31:58,069 view.py initialized
 INFO 2016-03-25 16:31:58,069 BPAppView init
+INFO 2016-03-25 16:42:19,499 common.py initialized
+INFO 2016-03-25 16:42:19,499 phrase_cache initialized None
+INFO 2016-03-25 16:42:19,528 view.py initialized
+INFO 2016-03-25 16:42:19,528 BPAppView init
