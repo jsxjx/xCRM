@@ -7,7 +7,7 @@ RUN mkdir /code
 WORKDIR /code
 COPY . /code
 COPY docker-entrypoint.sh docker-entrypoint.sh
-COPY nginx-web.conf /etc/nginx/sites-available/nginx-web.conf
+COPY nginx-web.conf /etc/nginx/nginx.conf
 EXPOSE 8000
 RUN chmod +x docker-entrypoint.sh
 CMD rm -f /etc/nginx/sites-enabled/default && ln -s /etc/nginx/sites-available/nginx-web.conf /etc/nginx/sites-enabled/default && service nginx start && /code/docker-entrypoint.sh
