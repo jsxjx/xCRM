@@ -1,0 +1,67 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% load EChartTag %}
+
+    {% AuthRequireTag role DEV_ROLE \ %}
+    {% BlockTag "Page Debug Info" N Y N %}
+    <div class="row">
+        <div class="col-md-12">
+            User Profile:<b> {{ up }} </b><br>
+            Nav:<b> {{ nav }} </b><br>
+            Language:<b> {{ lan }} </b><br>
+            Language in session:<b> {{ request.session.lan }} </b><br>
+            NavLoc:<b> {{ navLoc }} </b><br>
+            NavLoc in session:<b> {{ request.session.navLoc }} </b><br>
+            pageStatus:<b> {{ nav.pageStatus }} </b><br>
+            pageStatus in session:<b> {{ request.session.pageStatus }} </b><br>
+            loginRole: <b>{{ up.loginRole }}</b><br>
+            loginRoleName: <b>{{ up.loginRoleName }}</b><br>
+            navPath: <b>{{ request.session.navPath }}</b><br>
+            back: <b>{{ request.session.back }}</b><br>
+        </div>
+    </div>
+    {% EndBlockTag %}
+    {% BlockTag "Page Access Info" N Y N %}
+    <div class="row">
+        <div class="col-md-12">
+            <button id="refreshReportBtn" class="btn btn-default btn-sm">Refresh</button>
+            <div id="accessChart" style="height: 350px;"></div>
+        </div>
+    </div>
+    {% EndBlockTag %}
+    <div class="row">
+        <div class="col-md-12">
+
+        </div>
+    </div>
+    <script>
+        $(function(){
+           $("#refreshReportBtn").click(function(e){
+               refreshReport();
+           })
+        });
+        function refreshReport() {
+            $.ajax({
+                url: 'ajax?t=report&c=access',
+                dataType: "json",
+                success: function (data) {
+                    var accessChart = echarts.init(document.getElementById('accessChart'), 'macarons');
+                    option = jQuery.parseJSON(data.accessChart);
+                    accessChart.setOption(option);
+
+                },
+                cache: false
+            }).error(function (e) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            });
+        }
+    </script>
+
+    {% EndAuthRequireTag %}
+{% endblock %}
+

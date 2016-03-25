@@ -1,0 +1,50 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% load EChartTag %}
+    {% AuthRequireTag role OPERATION_ROLE \ %}
+    <div class="row">
+        <div class="box col-md-12">
+            <table id="myWorkList"
+                   class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                   cellspacing="0" width="100%">
+            </table>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            var myWorkDt = $('#myWorkList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=myworklist',
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                    }
+                },
+                "columns": [
+                    {
+                        "data": "id",
+                        "title": "{% PhraseTag order id %}",
+                        "width": '15%',
+                        "render": function (data, type, full, meta) {
+                            html = "<a href='javascript:toNav(\"commonOrder\",\"view\",\"" + full.id + "\")'>" + full.id + "</a>";
+                            return html;
+                        }
+                    },
+                    {"data": "desc", "title": "{% PhraseTag order description %}", "width": '65%'},
+                    {"data": "empResp", "title": "{% PhraseTag order empResp %}", "width": '20%'}
+                ]
+            });
+        })
+    </script>
+    {% EndAuthRequireTag %}
+{% endblock %}
+

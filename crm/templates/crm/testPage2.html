@@ -1,0 +1,41 @@
+{% extends 'crm/layout/dataViewLayout.html' %}
+{% load FormTag %}
+{% block dataName%} Test Data {% endblock %}
+{% block searchView %}
+Search
+
+  {% FormTag form2 home %}
+      {% csrf_token %}
+         <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage2','','search')">search</button>
+      {% EndFormTag %}
+
+{% endblock %}
+
+{% block resultView %}
+{% endblock %}
+
+{% block detailView %}
+
+        show detail
+      {% FormTag form2 home %}
+      {% csrf_token %}
+	<input type="text" class="form-control" name="name1" placeholder="Enter Comany Name" value="{{form.name1.value}}">
+         <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage2','1','edit')">Edit</button>
+	<button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage2','1','back')">Back</button>
+      {% EndFormTag %}
+
+{% endblock %}
+
+{% block editView %}
+
+    edit mode
+      {% FormTag form2 home %}
+      {% csrf_token %}
+	<input type="text" class="form-control" name="name1" placeholder="Enter Comany Name" value="{{form.name1.value}}">
+         <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage2','','save')">Save</button>
+	<input type="text" class="form-control" name="name1" placeholder="Enter Comany Name" value="{{form.name1.value}}">
+         <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage2','','cancel')">Cancel</button>
+
+      {% EndFormTag %}
+{% endblock %}
+

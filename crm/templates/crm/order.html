@@ -1,0 +1,345 @@
+{% extends 'crm/layout/dataViewLayout.html' %}
+{% load FormTag %}
+{% block dataName%} Order {% endblock %}
+{% block searchView %}
+{% load BlockTag %}
+{% load FieldSelectTag %}
+{% load PhraseTag %}
+  {% BlockTag order searchOrder N Y N %}
+    {% FormTag f home %}
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <label for="desc">{% PhraseTag order shortName %}</label>
+          <input type="text" class="form-control" name="desc" placeholder="" value="">
+        </div>
+      <!--/div>
+      <div class="clearfix"><br></div>
+      <div class="row"-->
+        <div class="col-md-6">
+          <label for="empResp">{% PhraseTag order empResp %}</label>
+          {% FieldSelectTag empResp sm.empResp SA01 empResp \ Y %}
+        </div>
+      </div>
+      <div class="clearfix"><br></div>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="stage">{% PhraseTag order stage %}</label>
+          {% FieldSelectTag stage sm.stage SA01 ext 00003 Y %}
+        </div>
+      <!--/div>
+      <div class="clearfix"><br></div>
+      <div class="row"-->
+        <div class="col-md-6">
+          <label for="district">{% PhraseTag g_default district %}</label>
+          {% FieldSelectTag district sm.district SA01 district \ Y %}
+        </div>
+      </div>
+      <div class="clearfix"><br></div>
+      <div class="row"-->
+        <div class="col-md-6">
+          <label for="channel">{% PhraseTag order channel %}</label>
+          {% FieldSelectTag channel sm.channel SA01 channel \ Y %}
+        </div>
+      <!--/div>
+      <div class="clearfix"><br></div>
+      <div class="row"-->
+        <div class="col-md-6">
+          <label for="travelAmountRange">{% PhraseTag order travelAmount %}</label>
+          {% FieldSelectTag travelAmountRange sm.travelAmountRange SA01 travelAmountRange \ Y %}
+        </div>
+      </div>
+      <div class="clearfix"><br></div>
+      <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','search')">{% PhraseTag g_default search %}</button>
+      {% EndFormTag %}
+
+  {% EndBlockTag%}
+   <div class="clearfix"><br></div>
+    {% BlockTag order searchResult  N Y N %}
+      <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','new')">{% PhraseTag g_default new %}</button>
+      <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','xlsoutput','','','N')">{% PhraseTag g_default xlsoutput %}</button>
+       <div class="clearfix"><br></div>
+      {% FormTag f home %}
+    <table class="table table-striped table-condensed table-bordered bootstrap-datatable datatable responsive">
+      <thead>
+        <tr>
+          <th>{% PhraseTag order shortName %}</th>
+          <th>{% PhraseTag order empResp %}</th>
+          <th>{% PhraseTag order district %}</th>
+          <th>{% PhraseTag order channel %}</th>
+          <th>{% PhraseTag order stage %}</th>
+          <th>{% PhraseTag order travelAmount %}</th>
+          <th>{% PhraseTag order goLiveDate %}</th>
+          <th>{% PhraseTag order text %}</th>
+          <th>{% PhraseTag order operation %}</th>
+         </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+        <tr>
+          <td width='10%'>
+              {{model.description}}
+          </td>
+           <td>
+              {{model.empResp.displayName}}
+          </td>
+          <td>{{model.customer.address1.district.description}}</td>
+          <td>{{model.channel.name1}}</td>
+          <td>{{model.ordercustomized.displayStage}}</td>
+          <td>{{model.ordercustomized.travelAmount}}</td>
+          
+          <td>{{model.ordercustomized.goLiveDate}}</td>
+          <td width='30%'>{{model.latestText}}</td>
+          <td class="center">
+            <a class="btn btn-success btn-sm" href="javascript:toNavWith('f','order','view','{{model.id}}')"><i class="glyphicon glyphicon-zoom-in icon-white"></i> {% PhraseTag g_default view %}</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+        {% csrf_token %}
+      {% EndFormTag %}
+    {% EndBlockTag %}
+
+
+{% endblock %}
+
+
+
+{% block resultView %}
+{% endblock %}
+
+{% block detailView %}
+  {% BlockTag Detail N Y N %}
+       <div class="row">
+         {% FormTag f home %}
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','edit','{{model.id}}')">{% PhraseTag g_default edit %}</button>
+         </div>
+	 {% EndFormTag %}
+       </div>
+       <div class="clearfix"><br></div>
+       <div class="row">
+         <div class="col-md-6">
+           <label for="name1">{% PhraseTag order description %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.description}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="name1">{% PhraseTag order customer %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.customer.name1}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="stage">{% PhraseTag order stage %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.ordercustomized.displayStage}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="stage">{% PhraseTag order channel %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.channel.name1}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="empResp">{% PhraseTag order empResp %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.empResp.displayName}}" readonly>
+         </div>
+         <div class="col-md-3">
+           <label for="stage">{% PhraseTag order priority %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.priority.description}}" readonly>
+         </div>
+         <div class="col-md-3">
+           <label for="stage">{% PhraseTag order status %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.status.description}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="travelAmount">{% PhraseTag order travelAmount %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.ordercustomized.travelAmount}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="amount">{% PhraseTag order amount %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.ordercustomized.amount}}" readonly>
+         </div>
+         <div class="col-md-6">
+           <label for="golivedate">{% PhraseTag order goLiveDate %}</label>
+           <input type="text" class="form-control" name="" placeholder="" value="{{model.ordercustomized.goLiveDate|date:"Y-m-d"}}" readonly>
+         </div>
+       </div>    
+       <div class="clearfix"><br></div>
+       <div class = "row">
+          <div class="col-md-12">
+            <label for="stage">{% PhraseTag order log %}</label>
+            <div class="well">
+               {{model.logs|safe}}
+            </div>
+          </div>
+       </div>
+   {% EndBlockTag %}
+{% endblock %}
+
+{% block newView %}
+{% FormTag f home %}
+  {% BlockTag "New" N Y N %}
+       <div class="row">
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','save')">{% PhraseTag g_default save %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','cancel')">{% PhraseTag g_default cancel %}</button>
+         </div>
+       </div>
+       <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+             <label for="description">{% PhraseTag order description %}</label>
+             <input type="text" class="form-control" name="description" placeholder="" value="{{model.description}}">
+          </div>
+          <div class="col-md-6">
+             <label for="name1">{% PhraseTag order customer %}</label>
+              {% FieldSelectTag account "" SA01 customer \ %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+             <label for="stage">{% PhraseTag order stage %}</label>
+             {% FieldSelectTag stage "" SA01 ext 00003 %}
+          </div>
+          <div class="col-md-6">
+             <label for="stage">{% PhraseTag order channel %}</label>
+             {% FieldSelectTag channel "" SA01 channel \ %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+             <label for="empResp">{% PhraseTag order empResp %}</label>
+             {% FieldSelectTag empResp "" SA01 empResp \%}
+          </div>
+          <div class="col-md-3">
+             <label for="stage">{% PhraseTag order priority %}</label>
+             {% FieldSelectTag priority model.priority.key SA01 priority \%}
+          </div>
+          <div class="col-md-3">
+             <label for="stage">{% PhraseTag order status %}</label>
+             {% FieldSelectTag status model.status.key SA01 status \%}
+          </div>
+        </div> 
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="travelAmount">{% PhraseTag order travelAmount %}</label>
+            <input type="text" class="form-control" name="travelAmount" placeholder="" value="">
+          </div>
+          <div class="col-md-6">
+            <label for="amount">{% PhraseTag order amount %}</label>
+            <input type="text" class="form-control" name="amount" placeholder="" value="">
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="golivedate">{% PhraseTag order goLiveDate %}</label>
+            <input type="text" name="goLiveDate" id="datepicker" value="">            
+          </div>
+        </div>    
+       
+   {% EndBlockTag %}
+          <div class="clearfix"><br></div>
+  {% BlockTag "Text" N Y N %}
+    <div class = "row">
+      <div class="col-md-12">
+        <label for="stage">{% PhraseTag order log %} {% PhraseTag order newLogPrompt %}</label>
+          <textarea name="text" class="well" style="width:100%"></textarea>
+      </div>
+    </div>
+  {% EndBlockTag %}
+{% EndFormTag %} 
+<script>
+ $(function() {
+    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+  });
+</script>
+{% endblock %}
+
+
+{% block editView %}
+  {% BlockTag Detail N Y N %}
+       {% FormTag f home %}
+       <div class="row">
+         
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','save')">{% PhraseTag g_default save %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','order','cancel')">{% PhraseTag g_default cancel %}</button>
+         </div>
+       </div>
+       <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+             <label for="description">{% PhraseTag order description %}</label>
+             <input type="text" class="form-control" name="description" placeholder="" value="{{model.description}}">
+          </div>
+          <div class="col-md-6">
+             <label for="name1">{% PhraseTag order customer %}</label>
+             <input type="text" class="form-control" name="account" placeholder="" value="{{model.customer.name1}}" readonly>
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+             <label for="stage">{% PhraseTag order stage %}</label>
+             {% FieldSelectTag stage model.ordercustomized.stage SA01 ext 00003 %}
+          </div>
+          <div class="col-md-6">
+             <label for="stage">{% PhraseTag order channel %}</label>
+             {% FieldSelectTag channel model.channel.id SA01 channel \%}</div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6"> 
+             <label for="empResp">{% PhraseTag order empResp %}</label>
+               {% FieldSelectTag empResp model.empResp.id SA01 empResp \%}
+          </div>
+          <div class="col-md-3">
+             <label for="stage">{% PhraseTag order priority %}</label>
+             {% FieldSelectTag priority model.priority.key SA01 priority \%}
+          </div>
+          <div class="col-md-3">
+             <label for="stage">{% PhraseTag order status %}</label>
+             {% FieldSelectTag status model.status.key SA01 status \%}
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="travelAmount">{% PhraseTag order travelAmount %}</label>
+            <input type="text" class="form-control" name="travelAmount" placeholder="" value="{{model.ordercustomized.travelAmount}}">
+          </div>
+          <div class="col-md-6">
+            <label for="amount">{% PhraseTag order amount %}</label>
+            <input type="text" class="form-control" name="amount" placeholder="" value="{{model.ordercustomized.amount}}">
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="golivedate">{% PhraseTag order goLiveDate %}</label>
+            <input type="text" name="goLiveDate" id="datepicker" value="{{model.ordercustomized.goLiveDate|date:"Y-m-d"}}">            
+          </div>
+        </div> 
+        <div class="clearfix"><br></div>
+        <div class = "row">
+          <div class="col-md-12">
+            <label for="stage">{% PhraseTag order log %} {% PhraseTag order newLogPrompt %}</label>
+            <textarea name="text" class="well" style="width:100%"></textarea>
+          </div>
+       </div>
+   
+       {% EndFormTag %}        
+   {% EndBlockTag %}
+<script>
+ $(function() {
+    $("#datepicker").datepicker({ dateFormat: 'yy-mm-dd' });
+  });
+</script>
+{% endblock %}
+

@@ -1,0 +1,164 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+{% load BlockTag %}
+{% load NavMenuTag %}
+{% load NavMenuItemTag %}
+{% load FormTag %}
+{% load AuthRequireTag %}
+{% load FieldSelectTag %}
+{% load PhraseTag %}
+<div id="content" class="col-lg-10 col-sm-10">
+  <div>
+    <ul class="breadcrumb">
+      <li>
+        <a href="#">Home</a>
+      </li>
+      <li>
+        <a href="#">Sales Detail</a>
+      </li>
+    </ul>
+  </div>
+  <div class="row">
+    {% AuthRequireTag role SALES_ROLE \ %}
+      You can only see it with role SALES_ROLE
+    {% EndAuthRequireTag%}
+    {% AuthRequireTag profile TEST_PROFILE \ %}
+      You can only see it with profile TEST_PROFILE
+    {% EndAuthRequireTag%}
+    {% AuthRequireTag parameter DEBUG Y %}
+      You can only see it with profile DEBUG Y
+    {% EndAuthRequireTag%}
+     {{request.user}}
+  </div>
+
+  <div class="row">
+    <a class="btn btn-default" href="javascript:toNavWith('form1','testPage','','')"><i class="glyphicon glyphicon-file"></i> New</a>
+    {% ifequal nav.pageMode 'edit' %}
+      <a class="btn btn-default" href="javascript:toNavWith('form1','testPage','','save')"><i class="glyphicon glyphicon-ok-sign"></i> Save</a>
+      <a class="btn btn-default" href="javascript:toNavWith('form1','testPage','','cancel')"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+    {%else%}
+      <a class="btn btn-default" href="javascript:toNavWith('form1','testPage','','edit')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+    {% endifequal %}
+  </div>
+  <div class="clearfix"><br></div>
+  <div class="row">
+    {% BlockTag Order N Y N %}
+      <div class="row">
+         {% FormTag form1 home %}
+         {% csrf_token %}
+        <div class="col-md-6">
+          <label class="control-label" for="nickName">Description</label>
+          <input type="text" class="form-control" name="textfield1" placeholder="Enter Nick Name" value="{{form.textfield1.value}}" {% ifequal nav.pageMode 'edit' %}{%else%}readonly{% endifequal %}>
+          {% if form.textfield1.errors %}
+            <div class="has-error">
+              <label class="control-label">{{form.textfield1.errors}}</label>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+        </div>
+        <div class="col-md-6">
+          <label class="control-label" for="account">Account</label>
+         {% ifequal request.session.navLink.pageMode 'edit' %}
+          <select class="form-control" data-placeholder="Customer account" name="account" data-rel="chosen">
+          <option value=""></option>
+          <optgroup label="NFC EAST">
+            <option>Dallas Cowboys</option>
+            <option>New York Giants</option>
+            <option>Philadelphia Eagles</option>
+            <option>Washington Redskins</option>
+          </optgroup>
+          <optgroup label="NFC NORTH">
+            <option>Chicago Bears</option>
+            <option>Detroit Lions</option>
+            <option>Green Bay Packers</option>
+            <option>Minnesota Vikings</option>
+          </optgroup>
+        </select>
+         {%else%}
+         <input type="text" class="form-control" name="account" placeholder="" value="" readonly>
+         {% endifequal %}
+
+
+       
+         {% if form.account.errors %}
+         <div class="has-error">
+           <label class="control-label">{{form.account.errors}}</label>
+         </div>
+         {% endif %}
+        </div>
+      </div>
+
+      <div class="clearfix"><br></div>
+
+
+
+       {% BlockTag Text N Y N %}
+         <b>CCC{{request.session.up}}</b>
+       {% EndBlockTag %}
+	<div class="clearfix"><br></div>
+       {% BlockTag Text2 N Y N %}
+         <b>CCC{{model}}</b>
+        <div class="row">
+         <div class="col-md-6">
+         {% FieldSelectTag status SA01 status \%}
+         </div>
+         <div class="col-md-6">
+         {% FieldSelectTag status SA01 priority \%}
+         </div>
+         <div class="col-md-6">
+         {% FieldSelectTag status SA01 ext 00003 %}
+         </div>
+         </div>
+        
+       {% EndBlockTag %}
+        {% EndFormTag %}
+    {% EndBlockTag %}
+  </div>
+  <div class="clearfix"><br></div>
+  <div class="row">
+    {% BlockTag "Test Phrase" N Y N %}
+       Test phrase 1: {% PhraseTag g_default appTitle %} <br>
+       Test phrase 2: {% PhraseTag g_default title %} <br>
+       Test phrase 3: {% PhraseTag r_default appTitle %} <br>
+       Test phrase 4: {% PhraseTag r_default title %} <br>
+    {% EndBlockTag %}
+  </div> 
+  <div class="clearfix"><br></div>
+  <div class="row">
+    {% BlockTag "Test Form" N Y N %}
+      {% FormTag form2 home %}
+      {% csrf_token %}
+	<input type="text" class="form-control" name="name1" placeholder="Enter Comany Name" value="{{form.name1.value}}">
+         <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','testPage_2')">Save</button>
+         
+      {% EndFormTag %}
+       {{a}}
+      <br>
+      <button id="button">aaaa</button>
+    {% EndBlockTag %}
+  </div> 
+  
+</div>
+
+<script>
+//$.post(URL,data,callback);
+$("button").click(function(){
+  $.post("ajax",
+  {
+   
+  },
+  //function(data,status){
+  //  alert("Data: " + data + "\nStatus: " + status);
+  //}
+    function(response,status){
+       alert(response)
+     }
+  );
+});
+
+</script>
+
+
+{% endblock %}
+

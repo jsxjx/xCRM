@@ -1,0 +1,26 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    <div>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Home</a>
+            </li>
+            <li>
+                <a href="#">Customer Detail</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class=" row">
+        <div class="col-md-6">
+            <label for="name1">Company Name</label>
+            <input type="text" class="form-control" name="name1" placeholder="Enter Comany Name"
+                   value="{{ model.name1 }}" readonly>
+        </div>
+        <div class="col-md-6">
+            <label for="district">District</label>
+            <input type="text" class="form-control" name="district" placeholder=""
+                   value="{{ model.address1.district.description }}" readonly>
+        </div>
+    </div>
+{% endblock %}

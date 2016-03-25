@@ -1,0 +1,302 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load staticfiles %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load PhraseTag %}
+    {% load EChartTag %}
+    {% load FormTag %}
+    {% BlockTag calendar calendar N Y N %}
+    <div id="calendar"></div>
+    <div class="modal fade" id="activityModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>{% PhraseTag calendar detail %}</h3>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="eventId" name="eventId">
+                    <div class="row">
+                        <div class="col-md-4 col-xs-6">
+                            <label for="startDate">{% PhraseTag order startDateTime %}</label>
+                            <input type="text" class="form-control" id="startDate" name="startDate"
+                                   placeholder="" value="" readonly="readonly">
+                        </div>
+                        <div class="col-md-4 col-xs-6"><label
+                                for="endDate">{% PhraseTag order endDateTime %}</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="endDate"
+                                   name="endDate"
+                                   placeholder=""
+                                   value="">
+                        </div>
+                        <div class="col-md-4 col-xs-4">
+                            <label for="visible">{% PhraseTag order visibility %}</label>
+                            <div id="visibleEditDiv">
+                                <select class="form-control" id="visible" name="visible" data-rel="chosen"
+                                        value="PUB">
+                                    <option value="PUB"
+                                            selected="selected">{% PhraseTag order public %}</option>
+                                </select>
+                            </div>
+                            <div id="visibleReadDiv">
+                                <input type="text" class="form-control" id="visibleInput" name=""
+                                       placeholder="" value="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-8 col-xs-8"><label
+                                for="title">{% PhraseTag order title %}</label>
+                            <input type="text" class="form-control"
+                                   id="title"
+                                   name="title"
+                                   placeholder=""
+                                   value=""
+                                   maxlength="50"></div>
+                        <div class="col-md-4 col-xs-4">
+                            <label for="customer">{% PhraseTag order customer %}</label>
+
+                            <div id="customerEditDiv">
+                                <select class="form-control" id="customer" name="customer" value="">
+                                </select>
+                            </div>
+                            <div id="customerReadDiv">
+                                <input type="text" class="form-control" id="customerInput" name=""
+                                       placeholder="" value="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-xs-12">
+                            <label for="text">{% PhraseTag order content %}</label>
+                            <textarea id="text" name="text" class="well" style="width:100%"></textarea>
+                        </div>
+                        <div class="clearfix" style="height:2px"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save" class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                    <button id="delete" class="btn btn-primary btn-sm">{% PhraseTag g_default delete %}</button>
+                    <a href="#" class="btn btn-default btn-sm"
+                       data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        $('#save').click(function () {
+            $('#save').attr("disabled", true);
+            $.post("home", {
+                pageAction: 'save',
+                pageApp: 'calendarsvr',
+                pageParams: $('#eventId').val(),
+                startDate: $('#startDate').val(),
+                endDate: $('#endDate').val(),
+                text: $('#text').val(),
+                visible: $('#visible').val(),
+                title: $('#title').val(),
+                customer: $('#customer').val()
+            }, function (data, result) {
+                $('#save').attr("disabled", false);
+                if (result == 'success') {
+                    $('#calendar').fullCalendar('refetchEvents');
+                }
+                $('#activityModal').modal('hide');
+            }).error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+                $('#save').attr("disabled", false);
+            });
+        });
+        $('#delete').click(function () {
+            $('#delete').attr("disabled", true);
+            $.post("home", {
+                pageAction: 'delete',
+                pageApp: 'calendarsvr',
+                pageParams: $('#eventId').val()
+            }, function (data, result) {
+                $('#delete').attr("disabled", false);
+                if (result == 'success') {
+                    $('#calendar').fullCalendar('refetchEvents');
+                }
+                $('#activityModal').modal('hide');
+            }).error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+                $('#delete').attr("disabled", false);
+            });
+        });
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            monthNames: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            monthNamesShort: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+            dayNames: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+            dayNamesShort: ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+            today: ["今天"],
+            firstDay: 0,
+            buttonText: {
+                today: '本月',
+                month: '月',
+                week: '周',
+                day: '日',
+                prev: '上一页',
+                next: '下一页'
+            },
+            defaultDate: '{{ today }}',
+            dayClick: function (date, allDay, jsEvent, view) {
+                $("#customer").empty()
+                var selectdate = moment(date)
+                if (jsEvent.name == 'month') {
+                    selectdate = moment(date).add(9, 'hours')
+                }
+                var sDate = selectdate.format('YYYY-MM-DD HH:mm')
+                var eDate = selectdate.add(1, 'hours').format('YYYY-MM-DD HH:mm')
+                $('#eventId').val('');
+                $('#visibleEditDiv').show();
+                $('#visibleReadDiv').hide();
+                $('#customerEditDiv').show();
+                $('#customerReadDiv').hide();
+                $('#save').show();
+                $('#delete').hide();
+                $('#startDate').removeAttr("readonly", "");
+                $('#endDate').removeAttr("readonly", "");
+                $("#startDate").datetimepicker({dateFormat: 'yy-mm-dd hh:ii', startView: 1, orientation: "right"});
+                $("#endDate").datetimepicker({dateFormat: 'yy-mm-dd hh:ii', startView: 1, orientation: "right"});
+                $('#text').removeAttr("readonly", "");
+                $('#title').removeAttr("readonly", "");
+                $('#startDate').val(sDate);
+                $('#endDate').val(eDate);
+                $('#text').val("");
+                $('#visible').val("PUB");
+                $('#title').val("");
+
+                $.post("home",
+                        {
+                            pageAction: 'getMyCust',
+                            pageApp: 'calendarsvr'
+                        },
+                        function (data) {
+                            var result = jQuery.parseJSON(data);
+                            if (result.code != 0) {
+                                alert(result.desc)
+                                return
+                            } else {
+                                $.each(result.customers, function (index, element) {
+                                    $('#customer').append("<option value='" + element[0] + "'>" + element[1] + "</option>");
+                                })
+                                $("#customer").chosen();
+                                $("select").trigger('chosen:updated');
+                                $('#activityModal').modal('show');
+                            }
+                        }).error(function (err) {
+                            alert('{% PhraseTag g_default ajaxError %}');
+                        }).complete(function (err) {
+                        });
+            },
+            eventClick: function (calEvent, jsEvent, view) {
+                $('#customer').empty()
+                $.post("home", {
+                    pageAction: 'view',
+                    pageApp: 'calendarsvr',
+                    pageParams: calEvent.id
+                }, function (data) {
+                    var result = jQuery.parseJSON(data);
+                    if (result.code != 0) {
+                        alert(result.desc)
+                        return
+                    }
+                    if (result.editable) {
+                        $('#visibleEditDiv').show()
+                        $('#visibleReadDiv').hide()
+                        $('#customerEditDiv').show()
+                        $('#customerReadDiv').hide()
+                        $('#delete').show()
+                        $('#save').show()
+                        $('#startDate').attr("readonly", false)
+                        $('#endDate').attr("readonly", false)
+                        $("#startDate").datetimepicker({
+                            dateFormat: 'yy-mm-dd hh:ii',
+                            startView: 1,
+                            orientation: "right"
+                        });
+                        $("#endDate").datetimepicker({
+                            dateFormat: 'yy-mm-dd hh:ii',
+                            startView: 1,
+                            orientation: "right"
+                        });
+                        $('#text').attr("readonly", false)
+                        $('#title').attr("readonly", false)
+                    } else {
+                        $('#visibleEditDiv').hide()
+                        $('#visibleReadDiv').show()
+                        $('#customerEditDiv').hide()
+                        $('#customerReadDiv').show()
+                        $('#startDate').attr("readonly", "readonly")
+                        $('#endDate').attr("readonly", "readonly")
+                        $('#startDate').datetimepicker('remove');
+                        $('#endDate').datetimepicker('remove');
+                        $('#text').attr("readonly", "readonly")
+                        $('#title').attr("readonly", "readonly")
+                        $('#delete').hide()
+                        $('#save').hide()
+                    }
+                    $('#eventId').val(result.event.id)
+                    $('#startDate').val(result.event.startDate)
+                    $('#endDate').val(result.event.endDate)
+                    $('#text').val(result.event.text)
+                    $('#title').val(result.event.title)
+                    $('#visible').val(result.event.visible.key)
+                    $('#visibleInput').val(result.event.visible.desc)
+                    $('#customerInput').val(result.event.customer[1])
+                    var customer = result.event.customer[0];
+
+                    $.post("home",
+                            {
+                                pageAction: 'getMyCust',
+                                pageApp: 'calendarsvr'
+                            },
+                            function (data) {
+                                var result = jQuery.parseJSON(data);
+                                if (result.code != 0) {
+                                    alert(result.desc);
+                                    return;
+                                } else {
+                                    $.each(result.customers, function (index, element) {
+                                        $('#customer').append("<option value='" + element[0] + "'>" + element[1] + "</option>");
+                                    });
+                                    $("#customer option[value='" + customer + "']").attr("selected", "selected");
+                                    $("#customer").chosen();
+                                    $("select").trigger('chosen:updated');
+                                    $('#activityModal').modal('show');
+                                }
+                            }).error(function (err) {
+                                alert('{% PhraseTag g_default ajaxError %}');
+                            }).complete(function (err) {
+                            });
+                }).error(function (err) {
+                    alert('{% PhraseTag g_default ajaxError %}');
+                }).complete(function (err) {
+                });
+            },
+            events: {
+                url: 'home',
+                type: 'POST',
+                data: {
+                    pageAction: 'getEvents',
+                    pageApp: 'calendarsvr'
+                },
+                error: function () {
+                    alert('there was an error while fetching events!');
+                }
+            }
+        });
+
+    </script>
+    {% EndBlockTag %}
+{% endblock %}
+

@@ -1,0 +1,41 @@
+{% extends 'crm/layout/loginLayout.html' %}
+{% load staticfiles %}
+{% load FormTag %}
+{% load PhraseTag %}
+{% block workarea %}
+    <div class="" style="height: 100%">
+        <div class="row sitebg">
+            <div class="row" style="height: 20%">
+            </div>
+            <div class="row">
+                <div class="col-md-5 center"
+                     style="background-color: rgba(255,255,255,0.5);padding-top: 20px;padding-bottom: 20px;">
+                    <div class="row">
+                        <div class="col-md-12 center">
+                            <h2>{% PhraseTag g_default selectRoleText %}</h2>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5 center">
+                            {% FormTag f home %}
+                            {% csrf_token %}
+                            <ul class="nav nav-pills nav-stacked">
+                                {% for role in roles %}
+                                    <li role="">
+                                        <a href="javascript:toNavWith('f','roleSelect','','{{ role.key }}')">
+                                            <h4>{{ role.description }}</h4></a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            {% EndFormTag %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+{% endblock %}
+

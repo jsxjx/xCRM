@@ -1,0 +1,142 @@
+{% extends 'crm/layout/dataViewLayout.html' %}
+{% load FormTag %}
+{% load BlockTag %}
+{% load FieldSelectTag %}
+{% load PhraseTag %}
+{% load UtilTag %}
+{% load AssignmentBlockTag %}
+{% block dataName %} Order {% endblock %}
+{% block searchView %}
+    {% BlockTag order searchOrder N Y N %}
+    {% FormTag f home %}
+    {% csrf_token %}
+    {% UtilTag buildSearchFields %}
+    <div class="clearfix"><br></div>
+    {% UtilTag buildSavedSearchField %}
+    {% UtilTag buildToolbar %}
+    {% EndFormTag %}
+    {% EndBlockTag %}
+    <div class="clearfix"><br></div>
+    {% BlockTag order searchResult N Y N %}
+    {% UtilTag buildResultToolbar %}
+    {% UtilTag buildSearchResult %}
+    {% EndBlockTag %}
+
+{% endblock %}
+
+{% block resultView %}
+{% endblock %}
+
+{% block detailView %}
+    {% BlockTag commonOrderTitle N Y N %}
+    {% UtilTag buildToolbar %}
+    {% UtilTag buildFields %}
+    {% FormTag f home %}
+    {% csrf_token %}
+    <div class="col-md-6">
+    </div>
+    {% EndFormTag %}
+    {% EndBlockTag %}
+    {% AssignmentBlockTag co oainfo %}
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default oainfo N Y N %}
+    {% UtilTag buildOAInfo %}
+    {% EndBlockTag %}
+    {% EndAssignmentBlockTag %}
+    {% AssignmentBlockTag co attachment %}
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default attachment N Y N %}
+    {% UtilTag buildOrderAttachment %}
+    {% EndBlockTag %}
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default orderFollowUp N Y N %}
+    {% UtilTag buildOrderRelation %}
+    {% EndBlockTag %}
+    {% EndAssignmentBlockTag %}
+    {% AssignmentBlockTag co changelog %}
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default change N Y N %}
+    {% UtilTag buildOrderChangeLog %}
+    {% EndBlockTag %}
+    {% EndAssignmentBlockTag %}
+{% endblock %}
+
+{% block newView %}
+    {% FormTag f home %}
+    {% csrf_token %}
+    {% BlockTag g_default new N Y N %}
+    {% UtilTag buildToolbar %}
+    {% UtilTag buildFields %}
+    {% EndBlockTag %}
+    {% EndFormTag %}
+{% endblock %}
+
+{% block editView %}
+    {% BlockTag commonOrderTitle N Y N %}
+    {% FormTag f home %}{% csrf_token %}
+    {% UtilTag buildToolbar %}
+    {% UtilTag buildFields %}
+    {% EndFormTag %}
+    {% EndBlockTag %}
+    {% AssignmentBlockTag co attachment %}
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default attachment N Y N %}
+    <form name="fileupload" action="home" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input id="navForm_pageApp" type="hidden" name="pageApp" value="commonOrder">
+        <input id="navForm_pageAction" type="hidden" name="pageAction" value="upload">
+        <input id="navForm_pageParams" type="hidden" name="pageParams" value="">
+        <input id="navForm_pageMode" type="hidden" name="pageMode" value="display">
+        {% PhraseTag g_default addNewFile %} <br>
+        <input id="id_file" name="file" type="file"/>
+        <input class="btn btn-primary btn-sm" type='submit' value='{% PhraseTag g_default upload %}'/>
+    </form>
+    <br>
+    <div class="modal" id="fileDelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalabel">{% PhraseTag g_default caution %}</h4>
+
+                    <div class="modal-body">
+                        {% PhraseTag order delFilePrompt %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm"
+                                data-dismiss="modal">{% PhraseTag g_default cancel %}</button>
+                        <button id="fileDelButton" type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="glyphicon glyphicon-trash icon-white"></i> {% PhraseTag g_default delete %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function delFile(fileId) {
+            $('#fileDelModal').modal('show');
+        }
+        $(function () {
+            $("#fileDelModal").on("show.bs.modal", function (event) {
+                var button = $(event.relatedTarget)
+                var modelId = button.data("whatever")
+                var modal = $(this)
+                $("#fileDelButton").on('click', function () {
+                    toNav('commonOrder', 'deletefile', modelId)
+                })
+            });
+        })
+    </script>
+    {% UtilTag buildOrderAttachment %}
+    {% EndBlockTag %}
+    <script>
+        $(function () {
+            $("#datepicker").datepicker({dateFormat: 'yy-mm-dd'});
+        });
+    </script>
+    {% EndAssignmentBlockTag %}
+{% endblock %}
+

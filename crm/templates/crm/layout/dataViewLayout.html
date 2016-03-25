@@ -1,0 +1,24 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load FormTag %}
+    {% ifequal nav.pageStatus '' %}
+    {% endifequal %}
+    {% ifequal nav.pageStatus 'search' %}
+        {% block searchView %}{% endblock %}
+    {% endifequal %}
+
+    {% ifequal nav.pageStatus 'result' %}
+        {% block resultView %}{% endblock %}
+    {% endifequal %}
+
+    {% ifequal nav.pageStatus 'detail' %}
+        {% block detailView %}{% endblock %}
+    {% endifequal %}
+    {% ifequal nav.pageStatus 'new' %}
+        {% block newView %}{% endblock %}
+    {% endifequal %}
+    {% ifequal nav.pageStatus 'edit' %}
+        {% block editView %}{% endblock %}
+    {% endifequal %}
+{% endblock %}
+

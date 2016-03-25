@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%;">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load staticfiles %}
+    {% load BlockTag %}
+    {% load NavMenuTag %}
+    {% load NavMenuItemTag %}
+    {% load AuthRequireTag %}
+    {% load PhraseTag %}
+    {% load MenuTag %}
+    {% load MessageTag %}
+    {% load UtilTag %}
+    <title>{% block title %}{% PhraseTag g_default appTitle %}{% endblock %}</title>
+
+    {#    <link id="bs-css" href="{% static "css/bootstrap-cerulean.min.css" %}" rel="stylesheet">#}
+    <link id="bs-css" href="{% static "bower_components/bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/charisma-app.css" %}" rel="stylesheet">
+    <link href="{% static "bower_components/fullcalendar/dist/fullcalendar.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/fullcalendar/dist/fullcalendar.print.css" %}" rel='stylesheet'
+          media='print'>
+    <link href="{% static "bower_components/datatables/media/css/jquery.dataTables.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/chosen/chosen.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/colorbox/example3/colorbox.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/responsive-tables/responsive-tables.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery.noty.css" %}" rel='stylesheet'>
+    <link href="{% static "css/noty_theme_default.css" %}" rel='stylesheet'>
+    <link href="{% static "css/elfinder.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/elfinder.theme.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery.iphone.toggle.css" %}" rel='stylesheet'>
+    <link href="{% static "css/uploadify.css" %}" rel='stylesheet'>
+    <link href="{% static "css/animate.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery-ui-1.8.21.custom.css" %}" rel='stylesheet'>
+    <link href="{% static "css/bootstrap-datetimepicker.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/evol.colorpicker.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery-ui.min.css" %}" rel='stylesheet'>
+
+    <script type="text/javascript" language="JavaScript"
+            src="{% static "bower_components/jquery/jquery-1.11.3.min.js" %}"></script>
+    <!-- external javascript -->
+    <script src="{% static "bower_components/bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+    <script src="{% static 'bower_components/fullcalendar/dist/fullcalendar.js' %}"></script>
+    <script src="{% static "bower_components/chosen/chosen.jquery.js" %}"></script>
+    <script src="{% static "bower_components/colorbox/jquery.colorbox-min.js" %}"></script>
+    <script src="{% static "bower_components/responsive-tables/responsive-tables.js" %}"></script>
+    <script src="{% static "bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js" %}"></script>
+    <!-- Chart libraries -->
+    <script src="{% static "bower_components/flot/excanvas.min.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.pie.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.stack.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.resize.js" %}"></script>
+    <script src="{% static "js/jquery.cookie.js" %}"></script>
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static "js/jquery.noty.js" %}"></script>
+    <script src="{% static "js/jquery.raty.min.js" %}"></script>
+    <script src="{% static "js/jquery.iphone.toggle.js" %}"></script>
+    <script src="{% static "js/jquery.autogrow-textarea.js" %}"></script>
+    <script src="{% static "js/jquery.uploadify-3.1.min.js" %}"></script>
+    <script src="{% static "js/jquery.history.js" %}"></script>
+    <script src="{% static "js/charisma.js" %}"></script>
+    <script src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "js/jquery-ui-datepicker.js" %}"></script>
+    <script src="{% static "js/bootstrap-datetimepicker.min.js" %}"></script>
+    <!-- echarts -->
+    <script src="{% static "customized/echarts/echarts-all.js" %}"></script>
+    <script src="{% static "js/evol.colorpicker.js" %}"></script>
+    <!-- highcharts -->
+    <script src="{% static "js/highcharts.js" %}"></script>
+    <script src="{% static "js/funnel.js" %}"></script>
+    <script src="{% static "js/exporting.js" %}"></script>
+    <script>
+        $(function () {
+            $('#divPageLoading').hide();
+        });
+
+        function toNav(app, action, params, mode, loading) {
+            if (loading != 'N') {
+                $('#divPageLoading').show();
+            }
+            document.forms["navForm"].navForm_pageApp.value = app == undefined ? '' : app;
+            document.forms["navForm"].navForm_pageAction.value = action == undefined ? '' : action;
+            document.forms["navForm"].navForm_pageParams.value = params == undefined ? '' : params;
+            document.forms["navForm"].navForm_pageMode.value = mode == undefined ? '' : mode;
+            document.forms["navForm"].submit();
+        }
+
+        function toNavWith(form, app, action, params, mode, loading) {
+            if (loading != 'N') {
+                $('#divPageLoading').show();
+            }
+            var cust_form = document.forms[form];
+            cust_form.navForm_pageApp.value = app == undefined ? '' : app;
+            cust_form.navForm_pageAction.value = action == undefined ? '' : action;
+            cust_form.navForm_pageParams.value = params == undefined ? '' : params;
+            cust_form.navForm_pageMode.value = mode == undefined ? '' : mode;
+            cust_form.submit();
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    var csrftoken = getCookie('csrftoken');
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        String.format = function () {
+            if (arguments.length == 0)
+                return null;
+            var str = arguments[0];
+            for (var i = 1; i < arguments.length; i++) {
+                var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+                str = str.replace(re, arguments[i]);
+            }
+            return str;
+        }
+    </script>
+    <style type="text/css">
+        .navbar-brand {
+            padding-top: 10px;
+            padding-left: 10px;
+        }
+
+        .navbar-brand img {
+            width: 250px;
+            height: 30px
+        }
+
+        .tab-content > .tab-pane,
+        .pill-content > .pill-pane {
+            display: block;
+            height: 0;
+            overflow-y: hidden;
+        }
+
+        .tab-content > .active,
+        .pill-content > .active {
+            height: auto;
+        }
+
+        .chosen-container-single .chosen-single {
+            height: 33px;
+            line-height: 33px;
+        }
+
+        .chosen-container-single .chosen-single div b {
+            background: url(chosen-sprite.png) no-repeat 0 5px;
+        }
+
+        .has-error .chosen-container-single .chosen-single {
+            border-color: #b94a48;
+        }
+
+        .clearfix {
+            height: 2px;
+        }
+
+        .busy-indicator-center {
+            width: 225px;
+            height: 15%;
+            margin: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        td.details-control {
+            width: 30px;
+            height: 30px;
+            background: url({% static "img/icon_add.png" %}) no-repeat center center;
+            background-size: 20px auto;
+            cursor: pointer;
+        }
+
+        tr.details td.details-control {
+            width: 30px;
+            height: 30px;
+            background: url({% static "img/icon_minus.png" %}) no-repeat center center;
+            background-size: 20px auto;
+        }
+
+        .btn:active, .btn.active {
+            background-image: none;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        .well, .box-inner, .sidebar-nav {
+            box-shadow: none;
+        }
+
+        .box-header {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .sitebg {
+            background-image: url({% static "img/bg3.jpg" %});
+            background-size: cover;
+            height: 100%;
+            padding-top: 0px;
+            padding-bottom: 0px;
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+        }
+    </style>
+</head>
+<body role="document" style="height:100%;">
+<div class="" style="height:100%;">
+    {% block workarea %}
+    {% endblock %}
+</div>
+</body>
+</html>

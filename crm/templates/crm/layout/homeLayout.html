@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load staticfiles %}
+    {% load BlockTag %}
+    {% load NavMenuTag %}
+    {% load NavMenuItemTag %}
+    {% load AuthRequireTag %}
+    {% load PhraseTag %}
+    {% load MenuTag %}
+    {% load MessageTag %}
+    {% load UtilTag %}
+    <title>{% block title %}{% PhraseTag g_default appTitle %}{% endblock %}</title>
+
+    {#    <link id="bs-css" href="{% static "css/bootstrap-cerulean.min.css" %}" rel="stylesheet">#}
+    <link id="bs-css" href="{% static "bower_components/bootstrap/dist/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "css/charisma-app.css" %}" rel="stylesheet">
+    <link href="{% static "bower_components/fullcalendar/dist/fullcalendar.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/fullcalendar/dist/fullcalendar.print.css" %}" rel='stylesheet'
+          media='print'>
+    <link href="{% static "bower_components/datatables/media/css/jquery.dataTables.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/chosen/chosen.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/colorbox/example3/colorbox.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/responsive-tables/responsive-tables.css" %}" rel='stylesheet'>
+    <link href="{% static "bower_components/bootstrap-tour/build/css/bootstrap-tour.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery.noty.css" %}" rel='stylesheet'>
+    <link href="{% static "css/noty_theme_default.css" %}" rel='stylesheet'>
+    <link href="{% static "css/elfinder.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/elfinder.theme.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery.iphone.toggle.css" %}" rel='stylesheet'>
+    <link href="{% static "css/uploadify.css" %}" rel='stylesheet'>
+    <link href="{% static "css/animate.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery-ui-1.8.21.custom.css" %}" rel='stylesheet'>
+    <link href="{% static "css/bootstrap-datetimepicker.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/evol.colorpicker.min.css" %}" rel='stylesheet'>
+    <link href="{% static "css/jquery-ui.min.css" %}" rel='stylesheet'>
+
+    <script type="text/javascript" language="JavaScript"
+            src="{% static "bower_components/jquery/jquery-1.11.3.min.js" %}"></script>
+    <!-- external javascript -->
+    <script src="{% static "bower_components/bootstrap/dist/js/bootstrap.min.js" %}"></script>
+    <script src="{% static 'bower_components/moment/min/moment.min.js' %}"></script>
+    <script src="{% static 'bower_components/fullcalendar/dist/fullcalendar.js' %}"></script>
+    <script src="{% static "bower_components/chosen/chosen.jquery.js" %}"></script>
+    <script src="{% static "bower_components/colorbox/jquery.colorbox-min.js" %}"></script>
+    <script src="{% static "bower_components/responsive-tables/responsive-tables.js" %}"></script>
+    <script src="{% static "bower_components/bootstrap-tour/build/js/bootstrap-tour.min.js" %}"></script>
+    <!-- Chart libraries -->
+    <script src="{% static "bower_components/flot/excanvas.min.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.pie.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.stack.js" %}"></script>
+    <script src="{% static "bower_components/flot/jquery.flot.resize.js" %}"></script>
+    <script src="{% static "js/jquery.cookie.js" %}"></script>
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static "js/jquery.noty.js" %}"></script>
+    <script src="{% static "js/jquery.raty.min.js" %}"></script>
+    <script src="{% static "js/jquery.iphone.toggle.js" %}"></script>
+    <script src="{% static "js/jquery.autogrow-textarea.js" %}"></script>
+    <script src="{% static "js/jquery.uploadify-3.1.min.js" %}"></script>
+    <script src="{% static "js/jquery.history.js" %}"></script>
+    <script src="{% static "js/charisma.js" %}"></script>
+    <script src="{% static "js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "js/jquery-ui-datepicker.js" %}"></script>
+    <script src="{% static "js/bootstrap-datetimepicker.min.js" %}"></script>
+    <!-- echarts -->
+    <script src="{% static "customized/echarts/echarts-all.js" %}"></script>
+    <script src="{% static "js/evol.colorpicker.js" %}"></script>
+    <!-- highcharts -->
+    <script src="{% static "js/highcharts.js" %}"></script>
+    <script src="{% static "js/funnel.js" %}"></script>
+    <script src="{% static "js/exporting.js" %}"></script>
+    <style type="text/css">
+        .navbar-brand {
+            padding-top: 10px;
+            padding-left: 10px;
+        }
+
+        .navbar-brand img {
+            width: 250px;
+            height: 30px
+        }
+
+        .tab-content > .tab-pane,
+        .pill-content > .pill-pane {
+            display: block;
+            height: 0;
+            overflow-y: hidden;
+        }
+
+        .tab-content > .active,
+        .pill-content > .active {
+            height: auto;
+        }
+
+        .chosen-container-single .chosen-single {
+            height: 33px;
+            line-height: 33px;
+        }
+
+        .chosen-container-single .chosen-single div b {
+            background: url(chosen-sprite.png) no-repeat 0 5px;
+        }
+
+        .has-error .chosen-container-single .chosen-single {
+            border-color: #b94a48;
+        }
+
+        .clearfix {
+            height: 2px;
+        }
+
+        .busy-indicator-center {
+            width: 225px;
+            height: 15%;
+            margin: auto;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        td.details-control {
+            width: 30px;
+            height: 30px;
+            background: url({% static "img/icon_add.png" %}) no-repeat center center;
+            background-size: 20px auto;
+            cursor: pointer;
+        }
+
+        tr.details td.details-control {
+            width: 30px;
+            height: 30px;
+            background: url({% static "img/icon_minus.png" %}) no-repeat center center;
+            background-size: 20px auto;
+        }
+
+        .btn:active, .btn.active {
+            background-image: none;
+            outline: 0;
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        .well, .box-inner, .sidebar-nav {
+            box-shadow: none;
+        }
+
+        .box-header {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+        }
+
+        .form-control-blank {
+            display: block;
+            width: 100%;
+            height: 34px;
+            padding: 6px 12px;
+            font-size: 14px;
+            line-height: 1.42857143;
+            color: #555;
+
+        }
+    </style>
+    <script>
+        $(function () {
+            $('#divPageLoading').hide();
+            $('#hideMenuBtn').click(function (e) {
+                if ($('#leftNav').is(':visible')) {
+                    {#                if ($('#leftNav').hasClass('col-md-2')) {#}
+                    $('i', "#hideMenuBtn").removeClass("glyphicon glyphicon-backward").addClass("glyphicon glyphicon-forward")
+                    $("#leftNav").hide();
+                    {#                    $("#leftNav").removeClass("col-md-2").addClass("col-md-1");#}
+                    $("#rightWorkarea").removeClass("col-md-10").addClass("col-md-12");
+                } else {
+                    $('i', "#hideMenuBtn").removeClass("glyphicon glyphicon-forward").addClass("glyphicon glyphicon-backward")
+                    $("#leftNav").show();
+                    {#                    $("#leftNav").removeClass("col-md-0").addClass("col-md-2");#}
+                    {#                    $("#leftNav").addClass("col-md-2");#}
+                    $("#rightWorkarea").removeClass("col-md-12").addClass("col-md-10");
+                }
+            });
+        });
+
+        function toNav(app, action, params, mode, loading) {
+            if (loading != 'N') {
+                $('#divPageLoading').show();
+            }
+            document.forms["navForm"].navForm_pageApp.value = app == undefined ? '' : app;
+            document.forms["navForm"].navForm_pageAction.value = action == undefined ? '' : action;
+            document.forms["navForm"].navForm_pageParams.value = params == undefined ? '' : params;
+            document.forms["navForm"].navForm_pageMode.value = mode == undefined ? '' : mode;
+            document.forms["navForm"].submit();
+        }
+
+        function toNavWith(form, app, action, params, mode, loading) {
+            if (loading != 'N') {
+                $('#divPageLoading').show();
+            }
+            var cust_form = document.forms[form];
+            cust_form.navForm_pageApp.value = app == undefined ? '' : app;
+            cust_form.navForm_pageAction.value = action == undefined ? '' : action;
+            cust_form.navForm_pageParams.value = params == undefined ? '' : params;
+            cust_form.navForm_pageMode.value = mode == undefined ? '' : mode;
+            cust_form.submit();
+        }
+
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie != '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function csrfSafeMethod(method) {
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        $.ajaxSetup({
+            beforeSend: function (xhr, settings) {
+                if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                    var csrftoken = getCookie('csrftoken');
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                }
+            }
+        });
+
+        String.format = function () {
+            if (arguments.length == 0)
+                return null;
+            var str = arguments[0];
+            for (var i = 1; i < arguments.length; i++) {
+                var re = new RegExp('\\{' + (i - 1) + '\\}', 'gm');
+                str = str.replace(re, arguments[i]);
+            }
+            return str;
+        }
+    </script>
+</head>
+<body role="document">
+<div class="ch-container">
+    <div class="row">
+        <div class="col-md-12">
+            {% block header %}
+
+                <div class="alert alert-info busy-indicator-center" id="divPageLoading">
+                    <div class="row">
+                        <p class="text-center">{% PhraseTag g_default plsWait %}</p>
+                    </div>
+                    <div class="row">
+                        <img src="{% static "img/ajax-loaders/ajax-loader-7.gif" %}"/>
+                    </div>
+                </div>
+
+                <form name='navForm' action='home' method='POST'>
+                    {% csrf_token %}
+                    <input id='navForm_pageApp' type='hidden' name='pageApp' value='home'>
+                    <input id='navForm_pageAction' type='hidden' name='pageAction' value='home'>
+                    <input id='navForm_pageParams' type='hidden' name='pageParams' value=''>
+                    <input id='navForm_pageMode' type='hidden' name='pageMode' value='display'>
+                </form>
+                <div class="navbar navbar-default" role="navigation">
+                    <div class="navbar-inner">
+                        <button type="button" class="navbar-toggle pull-left animated flip">
+                            <span class="sr-only"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="home"><img src="{% static "customized/img/logo.png" %}"/></a>
+                        {% if up.loginRole %}
+                            <div class="btn-group pull-right">
+                                <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <i class="glyphicon glyphicon-user green"></i><span
+                                        class="hidden-sm hidden-xs"> {{ up.loginRoleName }} {{ up.username }}</span>
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a id="profile"><i
+                                            class="glyphicon glyphicon-cog"> {% PhraseTag g_default profile %}</i></a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li><a href="logout"><i
+                                            class="glyphicon glyphicon-off"> {% PhraseTag g_default logout %}</i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="btn-group pull-right">
+                                <button id="messageBtn" class="btn btn-default"><i
+                                        class="glyphicon glyphicon-bell yellow"></i><span
+                                        class="hidden-sm hidden-xs"> {% PhraseTag menu message %}
+                                    <span id="messageBadge" class="notification red hide"></span>
+                                </span>
+                                </button>
+                            </div>
+                            <div class="btn-group pull-right">
+                                <button id="feedbackBtn" class="btn btn-default"><i
+                                        class="glyphicon glyphicon-exclamation-sign red"></i><span
+                                        class="hidden-sm hidden-xs"> {% PhraseTag menu feedback %}</span>
+                                </button>
+                            </div>
+                            <div class="btn-group pull-right">
+                                <button id="structureBtn" class="btn btn-default">
+                                    <i class="glyphicon glyphicon-info-sign blue"></i><span
+                                        class="hidden-sm hidden-xs"> {% PhraseTag menu corpStruct %}</span>
+                                </button>
+                            </div>
+                            <div class="modal fade" id="profileModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">×</button>
+                                            <h3>{% PhraseTag g_default profile %}</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="nickName">{% PhraseTag g_default nickName %}</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="text" class="form-control" id="nickName"
+                                                                   name="nickName"
+                                                                   placeholder="{% PhraseTag g_default enterNickName %}"
+                                                                   value="{{ up.username }}">
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <div id="nickNameIcon"></div>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <button id="saveNickName"
+                                                                    class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="clearfix"></div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="nickName">{% PhraseTag g_default oldPassword %}</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="password" class="form-control" id="oldPassword"
+                                                                   name="oldPassword"
+                                                                   placeholder="{% PhraseTag g_default enterOldPwd %}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="newPassword">{% PhraseTag g_default newPassword %}</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <input type="password" class="form-control" id="newPassword"
+                                                                   name="newPassword" onkeyup="checkPasswords()"
+                                                                   placeholder="{% PhraseTag g_default enterNewPwd %}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="newPassword2">{% PhraseTag g_default reNewPassword %}</label>
+                                                        </div>
+                                                        <div id="newPwdDiv" class="col-md-5">
+                                                            <div id="passwordMatchIcon"></div>
+                                                            <input type="password" class="form-control"
+                                                                   id="newPassword2"
+                                                                   name="newPassword2" onkeyup="checkPasswords()"
+                                                                   placeholder="{% PhraseTag g_default eNewPwdAgain %}">
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <div id="savePasswordIcon"></div>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <button id="savePassword"
+                                                                    class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="clearfix"></div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <label for="calendarEventColor">{% PhraseTag g_default calEventColor %}</label>
+                                                        </div>
+                                                        <div class="col-md-5">
+                                                            <div style="width:128px;">
+                                                                <input id="calendarEventColor" name="calendarEventColor"
+                                                                       style="width:100px;" id="mycolor"
+                                                                       class="colorPicker evo-cp0"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <div id="saveColorIcon"></div>
+                                                        </div>
+                                                        <div class="col-md-1">
+                                                            <button id="saveColor"
+                                                                    class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="#" class="btn btn-default"
+                                               data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">×</button>
+                                            <h3>{% PhraseTag g_default feedback %}</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-8 col-xs-8"><label
+                                                                for="fbTitle">{% PhraseTag feedback title %}</label>
+                                                            <input type="text" class="form-control"
+                                                                   id="fbTitle"
+                                                                   name="title"
+                                                                   placeholder=""
+                                                                   value=""
+                                                                   maxlength="50"></div>
+                                                        <div class="col-md-4 col-xs-4">
+                                                            <label for="fbType">{% PhraseTag feedback type %}</label>
+                                                            <select class="form-control" id="fbType"
+                                                                    name="customer" value="">
+                                                                <option value="BUG">{% PhraseTag feedback bug %}</option>
+                                                                <option value="SUG">{% PhraseTag feedback suggestion %}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-xs-12">
+                                                            <label for="fbText">{% PhraseTag feedback text %}</label>
+                                                            <textarea id="fbText" name="text" class="well"
+                                                                      style="width:100%"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="saveFeedback"
+                                                    class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                                            <a href="#" class="btn btn-default"
+                                               data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="structureModal" tabindex="-1" role="dialog"
+                                 aria-labelledby="myModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog" style="width: 80%">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal">×</button>
+                                            <h3>{% PhraseTag g_default corpStruct %}</h3>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-xs-12">
+                                                            <div id="structureChart" style="height: 350px;"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="#" class="btn btn-default"
+                                               data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <script>
+                                function checkMessage() {
+                                    $.ajax({
+                                        url: 'ajax?t=myunreadmessagecount',
+                                        dataType: "json",
+                                        success: function (data) {
+                                            jsonResult = jQuery.parseJSON(data);
+                                            if (jsonResult > 0) {
+                                                $("#messageBadge").removeClass("hide");
+                                                $("#messageBadge").html(jsonResult);
+                                            } else {
+                                                $("#messageBadge").addClass("hide");
+                                            }
+                                        },
+                                        cache: false
+                                    }).error(function (e) {
+                                        window.clearInterval(checkMessageTimerId)
+                                    });
+                                }
+                                checkMessage();
+                                var checkMessageTimerId = window.setInterval(checkMessage, 5000);
+                                function checkPasswords() {
+                                    if ($('#newPassword').val() == $('#newPassword2').val() && $('#newPassword').val() != '') {
+                                        $("#newPwdDiv").addClass("has-success");
+                                        $("#newPwdDiv").removeClass("has-error");
+                                    } else {
+                                        $("#newPwdDiv").removeClass("has-success");
+                                        $("#newPwdDiv").addClass("has-error");
+                                    }
+                                }
+                                $(function () {
+                                    $("#profile").click(function () {
+                                        $("#calendarEventColor").colorpicker({color: "{{ eventColor }}"});
+                                        $("#saveNickName").click(function () {
+                                            $('#saveNickName').attr("disabled", true);
+                                            $.post("home", {
+                                                pageAction: 'savenickname',
+                                                pageApp: 'service',
+                                                nickName: $('#nickName').val()
+                                            }, function (data, result) {
+                                                $('#saveNickName').attr("disabled", false);
+                                                if (result == 'success' && data['code'] == 0) {
+                                                    $("#nickNameIcon").addClass("glyphicon")
+                                                    $("#nickNameIcon").addClass("glyphicon-ok")
+                                                    $("#nickNameIcon").css("color", "#468847")
+                                                    setTimeout(function () {
+                                                        $("#nickNameIcon").removeClass("glyphicon-ok")
+                                                    }, 1000);
+                                                } else {
+                                                    $("#nickNameIcon").addClass("glyphicon")
+                                                    $("#nickNameIcon").addClass("glyphicon-remove")
+                                                    $("#nickNameIcon").css("color", "#b94a48")
+                                                    setTimeout(function () {
+                                                        $("#nickNameIcon").removeClass("glyphicon-remove")
+                                                    }, 1000);
+                                                }
+                                            }, 'json').error(function (err) {
+                                                alert('{% PhraseTag g_default ajaxError %}');
+                                            }).complete(function (err) {
+                                                $('#saveNickName').attr("disabled", false);
+                                            });
+                                        });
+                                        $("#savePassword").click(function () {
+                                            $('#savePassword').attr("disabled", true);
+                                            $.post("home", {
+                                                pageAction: 'savepassword',
+                                                pageApp: 'service',
+                                                newPassword: $('#newPassword').val(),
+                                                oldPassword: $('#oldPassword').val(),
+                                                newPassword2: $('#newPassword2').val()
+                                            }, function (data, result) {
+                                                $('#savePassword').attr("disabled", false);
+                                                if (result == 'success' && data['code'] == 0) {
+                                                    $("#savePasswordIcon").addClass("glyphicon")
+                                                    $("#savePasswordIcon").addClass("glyphicon-ok")
+                                                    $("#savePasswordIcon").css("color", "#468847")
+                                                    $('#oldPassword').val("")
+                                                    $('#newPassword').val("")
+                                                    $('#newPassword2').val("")
+                                                    $("#newPwdDiv").removeClass("has-success")
+                                                    $("#newPwdDiv").removeClass("has-error")
+                                                    setTimeout(function () {
+                                                        $("#savePasswordIcon").removeClass("glyphicon-ok")
+                                                    }, 1000);
+                                                } else {
+                                                    $("#savePasswordIcon").addClass("glyphicon")
+                                                    $("#savePasswordIcon").addClass("glyphicon-remove")
+                                                    $("#savePasswordIcon").css("color", "#b94a48")
+                                                    setTimeout(function () {
+                                                        $("#savePasswordIcon").removeClass("glyphicon-remove")
+                                                    }, 1000);
+                                                }
+                                            }, 'json').error(function (err) {
+                                                alert('{% PhraseTag g_default ajaxError %}');
+                                            }).complete(function (err) {
+                                                $('#savePassword').attr("disabled", false);
+                                            });
+                                        });
+                                        $('#saveColor').click(function () {
+                                            $('#saveColor').attr("disabled", true);
+                                            $.post("home", {
+                                                pageAction: 'saveColor',
+                                                pageApp: 'calendarsvr',
+                                                color: $('#calendarEventColor').val()
+                                            }, function (data, result) {
+                                                $('#saveColor').attr("disabled", false);
+                                                if (result == 'success' && data['code'] == 0) {
+                                                    $("#saveColorIcon").addClass("glyphicon")
+                                                    $("#saveColorIcon").addClass("glyphicon-ok")
+                                                    $("#saveColorIcon").css("color", "#468847")
+                                                    setTimeout(function () {
+                                                        $("#saveColorIcon").removeClass("glyphicon-ok")
+                                                    }, 1000);
+                                                } else {
+                                                    $("#saveColorIcon").addClass("glyphicon")
+                                                    $("#saveColorIcon").addClass("glyphicon-remove")
+                                                    $("#saveColorIcon").css("color", "#b94a48")
+                                                    setTimeout(function () {
+                                                        $("#saveColorIcon").removeClass("glyphicon-remove")
+                                                    }, 1000);
+                                                }
+                                            }, 'json').error(function (err) {
+                                                alert('{% PhraseTag g_default ajaxError %}');
+                                            }).complete(function (err) {
+                                                $('#saveColor').attr("disabled", false);
+                                            });
+                                        });
+                                        $("#profileModal").modal('show');
+                                    });
+                                    $("#feedbackBtn").click(function (e) {
+                                        $("#feedbackModal").modal('show');
+                                    });
+                                    $("#saveFeedback").click(function (e) {
+                                        $('#saveNickName').attr("disabled", true);
+                                        $.post("home", {
+                                            pageAction: 'create',
+                                            pageApp: 'modelsrv',
+                                            pageParams: 'feedback',
+                                            title: $("#fbTitle").val(),
+                                            type: $("#fbType").val(),
+                                            text: $("#fbText").val()
+                                        }, function (data, result) {
+                                            $('#saveColor').attr("disabled", false);
+                                            if (result == 'success') {
+                                                $("#feedbackModal").modal('hide');
+                                            } else {
+                                                alert('{% PhraseTag g_default ajaxError %}');
+                                            }
+                                        }, 'json').error(function (err) {
+                                            alert('{% PhraseTag g_default ajaxError %}');
+                                        }).complete(function (err) {
+                                            $('#saveNickName').attr("disabled", false);
+                                        });
+                                    });
+                                    $("#structureBtn").click(function (e) {
+                                        $("#structureModal").modal('show');
+
+                                        $.ajax({
+                                            url: 'ajax?t=report&c=corpstructview',
+                                            dataType: "json",
+                                            success: function (data) {
+                                                var structureChart = echarts.init(document.getElementById('structureChart'), 'macarons');
+                                                option = jQuery.parseJSON(data.structureChart);
+                                                structureChart.setOption(option);
+
+                                            },
+                                            cache: false
+                                        }).error(function (e) {
+                                            alert('{% PhraseTag g_default ajaxError %}');
+                                        });
+                                    });
+                                    $("#messageBtn").click(function (e) {
+                                        toNav('message');
+                                    });
+                                })
+                            </script>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+        <div class="col-md-12">
+            {% block workarea %}
+                {% AuthRequireTag auth PAGE_DEBUG_INFO 4 %}
+                <div class="row">
+                    <div class="col-md-12">
+                        {% BlockTag "Page debug info" N Y N %}
+                        User Profile:<b> {{ up }} </b><br>
+                        Nav:<b> {{ nav }} </b><br>
+                        Language:<b> {{ lan }} </b><br>
+                        Language in session:<b> {{ request.session.lan }} </b><br>
+                        NavLoc:<b> {{ navLoc }} </b><br>
+                        NavLoc in session:<b> {{ request.session.navLoc }} </b><br>
+                        pageStatus:<b> {{ nav.pageStatus }} </b><br>
+                        pageStatus in session:<b> {{ request.session.pageStatus }} </b><br>
+                        loginRole: <b>{{ up.loginRole }}</b><br>
+                        loginRoleName: <b>{{ up.loginRoleName }}</b><br>
+                        navPath: <b>{{ request.session.navPath }}</b><br>
+                        back: <b>{{ request.session.back }}</b><br>
+                        {% EndBlockTag %}
+                    </div>
+                </div>
+                <div class="clearfix"><br></div>
+                {% EndAuthRequireTag %}
+                <div class="row">
+                    <div id="leftNav" class="col-md-2">
+                        {% block leftNav %}
+                            {% MenuTag %}
+                            <br>
+                            {% UtilTag buildViewHistory %}
+                        {% endblock %}
+                    </div>
+                    <div id="rightWorkarea" class="col-md-10">
+                        <div id="hideMenuBtn" class="hidden-xs hidden-sm"><i class="glyphicon glyphicon-backward"></i>
+                        </div>
+
+                        {% MessageTag %}
+                        {% block rightWorkArea %}
+                        {% endblock %}
+                    </div>
+                </div>
+                <div class=""><br></div>
+                <div class="row">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        {% block footer %}
+                            <div class="navbar navbar-default" role="navigation">
+                                <div class="navbar-inner">
+                                    <p class="col-md-6 copyright">
+                                        {% PhraseTag g_default copyright %}<a
+                                            href="https://www.wfinance.com.cn">{% PhraseTag g_default companywh %}</a>
+                                    </p>
+
+                                    <p class="col-md-6 powered-by text-right">
+                                        {% PhraseTag g_default siteLicense %}
+                                    </p>
+                                </div>
+                            </div>
+                        {% endblock %}
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </div>
+</div>
+</body>
+</html>

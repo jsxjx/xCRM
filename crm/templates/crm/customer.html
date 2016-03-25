@@ -1,0 +1,330 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% BlockTag g_default customerList N Y N %}
+    {% AuthRequireTag auth CustomerAccess 8 %}
+    <script>
+        $(function () {
+            var customerDt = $('#customerList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=customerbplist',
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                    }
+                },
+                columns: [
+                    {data: 'name', "title": "{% PhraseTag g_default customerName %}", "width": '20%'},
+                    {data: 'district', "title": "{% PhraseTag g_default district %}", "width": '10%'},
+                    {data: 'address', "title": "{% PhraseTag g_default address %}", "width": '30%'},
+                    {
+                        "sortable": false,
+                        "render": function (data, type, full, meta) {
+                            html = "<button type='button' class='btn btn-success btn-sm' onclick='javascript:showCustomer(" + full.id + ",\"view\")'><i class=\"glyphicon glyphicon-zoom-in icon-white\"></i></button>";
+                            {% AuthRequireTag auth CustomerAccess 2 %}
+                            html += " <button type='button' class='btn btn-primary btn-sm' onclick='javascript:showCustomer(" + full.id + ",\"edit\")'><i class=\"glyphicon glyphicon-edit icon-white\"></i></button>";
+                            {% EndAuthRequireTag %}
+                            return html
+                        },
+                        "title": "{% PhraseTag order operation %}",
+                        "width": "10%"
+                    }
+                ]
+            });
+
+            $('#save').click(function () {
+                $('#save').attr("disabled", true);
+                $.post("home", {
+                    pageAction: 'update',
+                    pageApp: 'modelsrv',
+                    pageParams: 'customer',
+                    id: $('#customerId').val(),
+                    name: $('#name').val(),
+                    district: $('#districtOpt').val(),
+                    address: $('#address').val(),
+                    phone: $('#phone').val(),
+                    contactPerson: $('#contactPerson').val(),
+                    legalPerson: $('#legalPerson').val(),
+                    actualPerson: $('#actualPerson').val(),
+                    corpStructure: $('#corpStructure').val()
+                }, function (data, result) {
+                    $('#save').attr("disabled", false);
+                    if (result == 'success') {
+                        customerDt.ajax.reload();
+                    }
+                    $('#customerModal').modal('hide');
+                }).error(function (err) {
+                    alert('{% PhraseTag g_default ajaxError %}');
+                }).complete(function (err) {
+                    $('#save').attr("disabled", false);
+                });
+            });
+
+            $('#showLiscense').click(function (e) {
+                e.preventDefault();
+                var $bigImgDiv = $('#bigImg');
+                if ($bigImgDiv.is(':visible')) {
+                    $('i', $(this)).removeClass('glyphicon-zoom-out').addClass('glyphicon-zoom-in');
+                }
+                else {
+                    $('i', $(this)).removeClass('glyphicon-zoom-in').addClass('glyphicon-zoom-out');
+                }
+                $bigImgDiv.slideToggle();
+            });
+
+            $('.uploadLiscense').click(function () {
+                $.ajax({
+                    url: "home",
+                    type: "POST",
+                    cache: false,
+                    data: new FormData($('#fileupload')[0]),
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        $.post("home",
+                                {
+                                    pageAction: 'get',
+                                    pageApp: 'modelsrv',
+                                    pageParams: 'customer',
+                                    id: $('#bpId').val()
+                                }, function (d) {
+                                    $('#file').val('');
+                                    var result = jQuery.parseJSON(d);
+                                    if (result.corpLicense) {
+                                        $('.hasLiscense').show();
+                                        $('.noLiscense').hide();
+                                        $(".liscenseImg").attr("src", "data:image/png;base64," + result.imgData);
+                                        $("#bigImg").show();
+                                    } else {
+                                        $('.hasLiscense').hide();
+                                        $('.noLiscense').show();
+                                        $("#bigImg").hide();
+                                    }
+                                }).error(function (err) {
+                                    alert('{% PhraseTag g_default ajaxError %}');
+                                }).complete(function (err) {
+                                });
+                    },
+                    error: function (data) {
+                    }
+                });
+            });
+        });
+
+        function showCustomer(customerId, type) {
+            $('#customerId').val(customerId);
+            $('#bpId').val(customerId);
+            $.post("home",
+                    {
+                        pageAction: 'get',
+                        pageApp: 'modelsrv',
+                        pageParams: 'customer',
+                        id: customerId
+                    }, function (data) {
+                        var result = jQuery.parseJSON(data);
+                        $('#name').val(result.name);
+                        $('#district').val(result.districtName);
+                        $("#districtOpt option[value='" + result.district + "']").attr("selected", "selected");
+                        $("#districtOpt").trigger("chosen:updated");
+                        $('#address').val(result.address);
+                        $('#phone').val(result.phone);
+                        $('#contactPerson').val(result.contactPerson);
+                        $('#legalPerson').val(result.legalPerson);
+                        $('#actualPerson').val(result.actualPerson);
+                        $('#corpStructure').val(result.corpStructure);
+                        if (result.corpLicense) {
+                            $('.hasLiscense').show();
+                            $('.noLiscense').hide();
+                            $(".liscenseImg").attr("src", "data:image/png;base64," + result.imgData);
+                            $("#bigImg").show();
+                            $('#bigImg').toggle('hide');
+                            $('i', '#showLiscense').removeClass('glyphicon-zoom-out').addClass('glyphicon-zoom-in');
+                        } else {
+                            $('.hasLiscense').hide();
+                            $('.noLiscense').show();
+                            $(".liscenseImg").removeAttr("src");
+                            $("#bigImg").hide();
+                        }
+                        if (type == 'view') {
+                            $(".view").show();
+                            $(".edit").hide();
+                            $(".textfield").attr({"readonly": "readonly"});
+                            $("#save").hide();
+                        } else if (type == 'edit') {
+                            $(".view").hide();
+                            $(".edit").show();
+                            $(".textfield").removeAttr("readonly");
+                            $("#save").show();
+                        }
+                        $('#customerModal').modal("show");
+                    }).error(function (err) {
+                        alert('{% PhraseTag g_default ajaxError %}');
+                    }).complete(function (err) {
+                    });
+        }
+    </script>
+    <div class="row">
+        <div class="box col-md-12">
+            <table id="customerList"
+                   class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+            </table>
+        </div>
+    </div>
+    <div class="modal" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalabel">{% PhraseTag g_default customerDetail %}</h4>
+                    <input type="hidden" id="customerId" name="customerId">
+
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <label for="name">{% PhraseTag order customer %}</label>
+                                <input type="text" class="textfield form-control" id="name" name="name" placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label for="name">{% PhraseTag g_default district %}</label>
+
+                                <div class="view">
+                                    <input type="text" class="form-control" id="district" name="district" placeholder=""
+                                           value=""
+                                           readonly>
+                                </div>
+                                <div class="edit">
+                                    {% FieldSelectTag districtOpt model.address1.district.key SA01 district \ %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 col-xs-12">
+                                <label for="address">{% PhraseTag g_default address %}</label>
+                                <input type="text" class="textfield form-control" id="address" name="address"
+                                       placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <label for="phone">{% PhraseTag g_default phone %}</label>
+                                <input type="text" class="textfield form-control" id="phone" name="phone" placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label for="contactPerson">{% PhraseTag g_default contactPerson %}</label>
+                                <input type="text" class="textfield form-control" id="contactPerson"
+                                       name="contactPerson" placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <label for="legalPerson">{% PhraseTag g_default legalPerson %}</label>
+                                <input type="text" class="textfield form-control" id="legalPerson" name="legalPerson"
+                                       placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label for="legalPerson">{% PhraseTag g_default corpLiscense %}</label><br>
+
+                                <div class="view">
+                                    <div class="hasLiscense">
+                                        <img class="liscenseImg" width="30px" height="30px">
+                                        <button id="showLiscense" class="btn-success btn btn-sm"><i
+                                                class="glyphicon glyphicon-zoom-in icon-white"></i>
+                                        </button>
+                                    </div>
+                                    <div class="noLiscense">
+                                        <span class="btn-danger btn btn-sm"><i
+                                                class="glyphicon glyphicon-remove icon-white"></i> {% PhraseTag g_default noLiscense %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="edit">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="hasLiscense">
+                                                <button class="uploadLiscense btn-warning btn btn-sm"><i
+                                                        class="glyphicon glyphicon-upload icon-white "></i> {% PhraseTag g_default reUpload %}
+                                                </button>
+                                            </div>
+                                            <div class="noLiscense">
+                                                <button class="uploadLiscense btn btn-success btn-sm"><i
+                                                        class="glyphicon glyphicon-upload icon-white"></i> {% PhraseTag g_default upload %}
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <form id="fileupload" enctype="multipart/form-data">
+                                                {% csrf_token %}
+                                                <input id="navForm_pageApp" type="hidden" name="pageApp"
+                                                       value="attachment">
+                                                <input id="navForm_pageAction" type="hidden" name="pageAction"
+                                                       value="upload">
+                                                <input id="navForm_pageParams" type="hidden" name="pageParams"
+                                                       value="corpLiscense">
+                                                <input id="navForm_pageMode" type="hidden" name="pageMode" value="">
+                                                <input type="file" id="file" name="file">
+                                                <input id="bpId" type="hidden" name="bpId" value="">
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="bigImg">
+                            <div class="col-md-12 col-xs-12">
+                                <img class="liscenseImg" width="100%" height="100%">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-xs-6">
+                                <label for="actualPerson">{% PhraseTag g_default actualPerson %}</label>
+                                <input type="text" class="textfield form-control" id="actualPerson"
+                                       name="actualPerson"
+                                       placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                            <div class="col-md-6 col-xs-6">
+                                <label for="corpStructure">{% PhraseTag g_default copStructure %}</label>
+                                <input type="text" class="textfield form-control" id="corpStructure"
+                                       name="corpStructure"
+                                       placeholder=""
+                                       value=""
+                                       readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save" class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                    <button type="button" class="btn btn-default btn-sm"
+                            data-dismiss="modal">{% PhraseTag g_default cancel %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    {% EndAuthRequireTag %}
+    {% EndBlockTag %}
+{% endblock %}
+

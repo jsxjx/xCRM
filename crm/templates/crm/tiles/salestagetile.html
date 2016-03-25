@@ -1,0 +1,46 @@
+{% load BlockTag %}
+{% load PhraseTag %}
+{% load staticfiles %}
+<table id="{{ tableId }}" class=" table table-striped table-condensed table-bordered bootstrap-datatable datatable
+       responsive">
+    <thead>
+    <tr>
+        <th>{% PhraseTag order shortName %}</th>
+        <th>{% PhraseTag order channel %}</th>
+        <th>{% PhraseTag order travelAmount %}</th>
+        <th>{% PhraseTag order stage1cost %}</th>
+        <th>{% PhraseTag order stage2cost %}</th>
+        <th>{% PhraseTag order stage3cost %}</th>
+        <th>{% PhraseTag order stage4cost %}</th>
+        <th>{% PhraseTag order stage5cost %}</th>
+        <th>{% PhraseTag order text %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order in recordstatistic %}
+        <tr>
+            <td width='150px'>
+                <a href="javascript:toNav('commonOrder','view','{{ order.id }}')">{{ order.desc }}</a>
+            </td>
+            <td width='80px'>
+                {{ order.channel }}
+            </td>
+            <td width='60px'>
+                {{ order.travelAmount }}
+            </td>
+            {% for stage in order.statistic %}
+                <td width='50px'>
+                    {% if stage.visible %}
+                        <span class="label-{{ stage.cssClass }} label label-default">
+                            <i class="glyphicon glyphicon-{{ stage.icon }}"></i> {{ stage.daysDiff }}
+                        </span>
+                    {% endif %}
+                </td>
+            {% endfor %}
+            <td width=''>
+                {{ order.text }}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,156 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load FormTag %}
+    {% load EndFormTag %}
+    <div>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Home</a>
+            </li>
+            <li>
+                <a href="#">New Sales Order</a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-lg-10 col-sm-10">
+        <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form','orderSave')">Save Order</button>
+    </div>
+    {% FormTag form home %}
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label for="description">Description</label>
+            </div>
+            <div class="col-md-9">
+                <input type="text" class="form-control" name="description" placeholder="Enter description">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label class="control-label" for="account">Account</label>
+            </div>
+            <div class="col-md-9">
+
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label class="control-label" for="employeeResponsible">Employee Responsible</label>
+            </div>
+            <div class="col-md-9">
+                <select data-placeholder="Employee Responsible" name="employeeResponsible" data-rel="chosen">
+                    <option value=""></option>
+                    <optgroup label="NFC EAST">
+                        <option>Jimmy</option>
+                        <option>Tom</option>
+                        <option>Jerry</option>
+                        <option>Jack</option>
+                    </optgroup>
+                    <optgroup label="NFC NORTH">
+                        <option>Eric</option>
+                        <option>Alex</option>
+                        <option>Steven</option>
+                        <option>Kelly</option>
+                    </optgroup>
+                </select>
+                {% if form.employeeResponsible.errors %}
+                    <div class="has-error">
+                        <label class="control-label">{{ form.employeeResponsible.errors }}</label>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label class="control-label" for="priority">Priority</label>
+
+            </div>
+            <div class="col-md-9">
+                <select name="priority" data-rel="chosen">
+                    <option>Very High</option>
+                    <option>High</option>
+                    <option>Meduim</option>
+                    <option>Low</option>
+                </select>
+                {% if form.priority.errors %}
+                    <div class="has-error">
+                        <label class="control-label">{{ form.priority.errors }}</label>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label class="control-label" for="status">Status</label>
+            </div>
+            <div class="col-md-9">
+                <select name="status" data-rel="chosen">
+                    <option value="E001">New</option>
+                    <option value="E002">In progress</option>
+                    <option value="E003">Hand over</option>
+                    <option value="E004">Closed</option>
+                </select>
+                {% if form.status.errors %}
+                    <div class="has-error">
+                        <label class="control-label">{{ form.status.errors }}</label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-3">
+                <label class="control-label" for="businessStatus">Business Status</label>
+            </div>
+            <div class="col-md-9">
+                <select name="businessStatus" data-rel="chosen">
+                    <option>Stage1</option>
+                    <option>Stage2</option>
+                    <option>Stage3</option>
+                    <option>Stage4</option>
+                    <option>Stage5</option>
+                    <option>Stage6</option>
+                </select>
+                {% if form.businessStatus.errors %}
+                    <div class="has-error">
+                        <label class="control-label">{{ form.businessStatus.errors }}</label>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+    {% EndFormTag %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="col-md-2">
+
+            </div>
+            <div class="col-md-10">
+            </div>
+        </div>
+        <div class="col-md-6">
+        </div>
+    </div>
+{% endblock %}

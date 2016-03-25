@@ -1,0 +1,277 @@
+{% extends 'crm/layout/dataViewLayout.html' %}
+{% load FormTag %}
+{% block dataName%} Business Partner {% endblock %}
+{% block searchView %}
+{% load BlockTag %}
+{% load PhraseTag %}
+{% load FieldSelectTag %}
+  {% BlockTag bp searchBp N Y N %}
+    {% FormTag sf home %}
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <label for="name1">{% PhraseTag g_default name %}</label>
+          <input type="text" class="form-control" name="name1" placeholder="{% PhraseTag g_default namePrompt %}" value="{{form.name1.value}}">
+        </div>
+      </div>
+      <div class="clearfix"><br></div>
+       <div class="row">
+        <div class="col-md-6">
+          <label for="stage">{% PhraseTag bp relation %}</label>
+              {% FieldSelectTag bpRelation "" SA01 bpRelation \%}
+          </div>
+       </div>
+      <div class="clearfix"><br></div>
+      <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('sf','bp','search')">{% PhraseTag g_default search %}</button>
+      {% EndFormTag %}
+  {% EndBlockTag%}
+   <div class="clearfix"><br></div>
+    {% BlockTag bp bpResult N Y N %}
+    <button class="btn btn-primary  btn-setting btn-sm">{% PhraseTag g_default new %}</button>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h3>{% PhraseTag g_default type %}</h3>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-info">
+              {% PhraseTag bp bpCreationPrompt %}
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','new','IN')">{% PhraseTag bp individual %}</button>
+            <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','new','CO')">{% PhraseTag bp corporate %}</button>
+          </div>
+          <div class="modal-footer">
+            <a href="#" class="btn btn-default btn-sm" data-dismiss="modal">{% PhraseTag g_default close %}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="clearfix"><br></div>
+      {% FormTag f home %}
+    <table class="table table-striped table-bordered bootstrap-datatable datatable responsive">
+      <thead>
+        <tr>
+         <th>{% PhraseTag g_default type %}</th>
+          <th>{% PhraseTag g_default name %}</th>
+          <th>{% PhraseTag g_default operation %}</th>
+         </tr>
+      </thead>
+      <tbody>
+        {% for model in models %}
+        <tr>
+          <td>{{model.type.description}}</td>
+          <td>{{model.displayName}}</td>
+          <td class="center">
+            <a class="btn btn-success btn-sm" href="javascript:toNavWith('f','bp','view','{{model.id}}')"><i class="glyphicon glyphicon-zoom-in icon-white"></i>  {% PhraseTag g_default view %}</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+        {% csrf_token %}
+      {% EndFormTag %}
+    {% EndBlockTag %}
+
+
+{% endblock %}
+
+
+
+{% block resultView %}
+{% endblock %}
+
+{% block detailView %}
+  {% BlockTag bp detail N Y N %}
+       <div class="row">
+         {% FormTag f home %}
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','edit','{{model.id}}')">{% PhraseTag g_default edit %}</button>
+         </div>
+	 {% EndFormTag %}
+       </div>
+       <div class="clearfix"><br></div>
+        {% ifequal bpType 'IN'%}
+        <div class="row">       
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp firstName %}</label>
+             <input type="text" class="form-control" name="firstName" placeholder="" value="{{model.firstName}}" readonly>
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp middleName %}</label>
+             <input type="text" class="form-control" name="middleName" placeholder="" value="{{model.middleName}}" readonly>
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp lastName %}</label>
+             <input type="text" class="form-control" name="lastName" placeholder="" value="{{model.lastName}}" readonly>
+          </div>
+        </div>
+       {% endifequal %}
+       {% ifequal bpType 'CO'%}
+        <div class="row">
+          <div class="col-md-6">
+             <label for="name1">{% PhraseTag g_default name %}</label>
+             <input type="text" class="form-control" name="name1" placeholder="" value="{{model.name1}}" readonly>
+          </div>
+        </div>
+       {% endifequal %}
+
+       <div class="clearfix"><br></div>
+       {% BlockTag bp address N Y N %}
+        <div class="row">
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default address %}</label>
+             <input type="text" class="form-control" name="address" placeholder="" value="{{model.address1.address1}}" readonly>
+          </div>
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default district %}</label>
+             <input type="text" class="form-control" name="address" placeholder="" value="{{model.address1.district.description}}" readonly>
+          </div>
+        </div>
+       {% EndBlockTag %}
+    {% EndBlockTag %}
+{% endblock %}
+
+{% block newView %}
+  {% BlockTag Detail N Y N %}
+       {% FormTag f home %}
+       <div class="row">
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','save')">{% PhraseTag g_default save %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','cancel')">{% PhraseTag g_default cancel %}</button>
+         </div>
+       </div>
+       <div class="clearfix"><br></div>
+       {% ifequal bpType 'IN'%}
+        <div class="row">       
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp firstName %}</label>
+             <input type="text" class="form-control" name="firstName" placeholder="" value="">
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp middleName %}</label>
+             <input type="text" class="form-control" name="middleName" placeholder="" value="">
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp lastName %}</label>
+             <input type="text" class="form-control" name="lastName" placeholder="" value="">
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">       
+          <div class="col-md-4">
+            <input type="checkbox" id="ck1" name="asEmp" value="true"> {% PhraseTag bp createAsEmp %}
+          </div>
+        </div>
+       {% endifequal %}
+       {% ifequal bpType 'CO'%}
+        <div class="row">
+          <div class="col-md-6">
+             <label for="name1">{% PhraseTag g_default name %}</label>
+<input type="text" class="form-control" name="name1" placeholder="" onkeypress="if(event.keyCode==13) {validate();return false;}" value="{{model.name1}}" >
+             <script>
+               function validate(){
+                   if (document.forms['f'].relation.value ==''){
+                       alert('Choose relation type')
+                   } else {
+            	         toNavWith('f','bp','save')
+                   }
+               }
+             </script>
+          </div>
+        </div>
+        <div class="clearfix"><br></div>
+        <div class="row">       
+          <div class="col-md-4">
+               <div class="radio">
+                 <label>
+                   <input type="radio" name="relation" id="optionsRadios1" value="TM">
+                   {% PhraseTag bp createAsTMC %}
+                 </label>
+               </div>
+               <div class="radio">
+                 <label>
+                   <input type="radio" name="relation" id="optionsRadios2" value="C1">
+                   {% PhraseTag bp createAsCustomer %}
+                 </label>
+               </div>
+          </div>
+        </div>
+       {% endifequal %}
+        <div class="clearfix"><br></div>
+    {% BlockTag bp address N Y N %}
+        <div class="row">
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default address %}</label>
+             <input type="text" class="form-control" name="address" placeholder="" value="{{model.address1.address1}}" >
+          </div>
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default district %}</label>
+             {% FieldSelectTag district model.address1.district.key SA01 district \%}
+          </div>
+        </div>
+       {% EndBlockTag %}
+       {% EndFormTag %}        
+   {% EndBlockTag %}
+{% endblock %}
+
+
+{% block editView %}
+  {% BlockTag Detail N Y N %}
+       {% FormTag f home %}
+       <div class="row">
+         {% csrf_token %}
+         <div class="col-md-6">
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','back')">{% PhraseTag g_default back %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','save')">{% PhraseTag g_default save %}</button>
+           <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('f','bp','cancel')">{% PhraseTag g_default cancel %}</button>
+         </div>
+       </div>
+       <div class="clearfix"><br></div>
+        <div class="row">
+       {% ifequal bpType 'IN'%}
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp firstName %}</label>
+             <input type="text" class="form-control" name="firstName" placeholder="" value="{{model.firstName}}">
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp middleName %}</label>
+             <input type="text" class="form-control" name="middleName" placeholder="" value="{{model.middleName}}">
+          </div>
+          <div class="col-md-4">
+             <label for="name1">{% PhraseTag bp lastName %}</label>
+             <input type="text" class="form-control" name="lastName" placeholder="" value="{{model.lastName}}">
+          </div>
+        {% endifequal %}
+        {% ifequal bpType 'CO'%}      
+          <div class="col-md-6">
+             <label for="name1">{% PhraseTag g_default name %}</label>
+             <input type="text" class="form-control" name="name1" placeholder="" value="{{model.name1}}">
+          </div>
+        {% endifequal %}
+        </div>    
+ 
+        <div class="clearfix"><br></div>
+       {% BlockTag bp address N Y N %}
+        <div class="row">
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default address %}</label>
+             <input type="text" class="form-control" name="address" placeholder="" value="{{model.address1.address1}}" >
+          </div>
+          <div class="col-md-6">
+             <label for="address">{% PhraseTag g_default district %}</label>
+             {% FieldSelectTag district model.address1.district.key SA01 district \%}
+          </div>
+        </div>
+       {% EndBlockTag %}
+     {% EndFormTag %}  
+   {% EndBlockTag %}
+{% endblock %}
+

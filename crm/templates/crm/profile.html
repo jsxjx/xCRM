@@ -1,0 +1,177 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load FormTag %}
+    <div>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Home</a>
+            </li>
+            <li>
+                <a href="#">User Profile</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class=" row">
+        <div class="col-md-12">
+
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-8">
+                    {% FormTag form1 home %}
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="nickName">Nick Name</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" name="nickName" placeholder="Enter Nick Name"
+                                   value="{{ up.username }}">
+                            {% if form.nickName.errors %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ form.nickName.errors }}</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <br>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form1','chgname')">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <hr>
+                    </div>
+                    {% EndFormTag %}
+                    {% FormTag form2 home %}
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="nickName">Old Password</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" name="oldPassword"
+                                   placeholder="Enter Old Password">
+                            {% if form.oldPassword.errors %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ form.oldPassword.errors }}</label>
+                                </div>
+                            {% endif %}
+                            {% if p2 %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ p2 }}</label>
+                                </div>
+                            {% endif %}
+
+                        </div>
+                        <br>
+                    </div>
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="nickName">New Password</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" name="newPassword"
+                                   placeholder="Enter New Password">
+                            {% if form.newPassword.errors %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ form.newPassword.errors }}</label>
+                                </div>
+                            {% endif %}
+                            {% if p1 %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ p1 }}</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <br>
+                    </div>
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="nickName">New Password Again</label>
+                        </div>
+                        <div class="col-md-8">
+                            <input type="password" class="form-control" name="newPasswordAgain"
+                                   placeholder="Enter New Password Again">
+                            {% if form.newPasswordAgain.errors %}
+                                <div class="has-error">
+                                    <label class="control-label">{{ form.newPasswordAgain.errors }}</label>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <br>
+                    </div>
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary btn-sm" onclick="javascript:toNavWith('form2','chgpwd')">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <!--button class="btn btn-primary btn-sm" onclick="home">Back</button-->
+                        </div>
+                    </div>
+                    {% EndFormTag %}
+                    <div class="clearfix"></div>
+                    <br>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="calendarEventColor">Calendar event color</label>
+                        </div>
+                        <div class="col-md-3">
+                            <div style="width:128px;">
+                                <input id="calendarEventColor" name="calendarEventColor" style="width:100px;"
+                                       id="mycolor" class="colorPicker evo-cp0"/>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <button id="saveColor" class="btn btn-primary btn-sm">Save</button>
+                        </div>
+                        <script>
+                            $(document).ready(function () {
+                                $("#calendarEventColor").colorpicker({color: "{{ eventColor }}"});
+                                $('#saveColor').click(function () {
+                                    $.post("home", {
+                                        pageAction: 'saveColor',
+                                        pageApp: 'calendarsvr',
+                                        color: $('#calendarEventColor').val()
+                                    }, function (data, result) {
+                                        if (result != 'success') {
+                                            alert('failed');
+                                        } else {
+                                            alert('saved')
+                                        }
+                                    }).error(function (err) {
+                                        alert('{% PhraseTag g_default ajaxError %}');
+                                    }).complete(function (err) {
+                                    });
+                                });
+                            });
+
+                        </script>
+                    </div>
+
+                </div>
+                <div class="col-md-2">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

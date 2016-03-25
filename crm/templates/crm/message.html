@@ -1,0 +1,260 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% load EChartTag %}
+    <div class="row">
+        <div class="box col-md-12">
+            {% BlockTag g_default employee N Y N %}
+            <div id="userlist" class="row">
+            </div>
+            {% EndBlockTag %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="box col-md-12">
+            <table id="myMessageList"
+                   class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                   cellspacing="0" width="100%">
+            </table>
+        </div>
+    </div>
+    <div class="modal fade" id="replyMsgModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>{% PhraseTag message sendMessage %}</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12"><label
+                                        for="receiver">{% PhraseTag message receiver %}</label>
+                                    <select id="receiver" multiple name="receiver" class="form-control"
+                                            data-rel="chosen">
+                                        {% for user in users %}
+                                            <option value="{{ user.id }}">{{ user.userbp.displayName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <input type="hidden" id="receiverId">
+                                    <input type="hidden" id="msgId">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-xs-12">
+                                    <label for="text">{% PhraseTag message text %}</label>
+                                    <textarea id="text" name="text" class="well"
+                                              style="width:100%"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="sendMsg"
+                            class="btn btn-primary btn-sm">{% PhraseTag message send %}</button>
+                    <a href="#" class="btn btn-default"
+                       data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var myMessageDt;
+        $(function () {
+            myMessageDt = $('#myMessageList').DataTable({
+                {% PhraseTag g_default dataTableCommNoPro %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=mymessagelist',
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                    }
+                },
+                "columns": [
+                    {
+                        "render": function (data, type, full, meta) {
+                            if (full.receiverReadFlag) {
+                                return full.sender;
+                            } else {
+                                return "<b>" + full.sender + "</b>";
+                            }
+                        },
+                        "title": "{% PhraseTag message sender %}",
+                        "width": '100px'
+                    },
+                    {
+                        "render": function (data, type, full, meta) {
+                            if (full.receiverReadFlag) {
+                                return full.message;
+                            } else {
+                                return "<b>" + full.message + "</b>";
+                            }
+                        },
+                        "title": "{% PhraseTag message content %}"
+                    },
+                    {
+                        "render": function (data, type, full, meta) {
+                            if (full.receiverReadFlag) {
+                                return full.sentAt;
+                            } else {
+                                return "<b>" + full.sentAt + "</b>";
+                            }
+                        },
+                        "title": "{% PhraseTag message sentAt %}", "width": '15%'
+                    },
+                    {
+                        "sortable": false,
+                        "render": function (data, type, full, meta) {
+                            html = "<div class='btn-group'>";
+                            html += "<button href='#' type='button' class='btn btn-default btn-xs' onclick='javascript:markMsg(" + full.id + "," + full.receiverReadFlag + ")'><img with=25 height=25 src=\"/salesstatic/customized/img/{0}.png\"></button>";
+                            icon = "mail";
+                            if (full.receiverReadFlag) {
+                                icon = "mail_read";
+                            }
+                            html = String.format(html, icon)
+                            //data-toggle="popover" data-content="And here's some amazing content. It's very engaging. right?" title="A Title"
+                            html += "&nbsp;<button href='#' type='button' class='btn btn-default btn-xs' onclick='javascript:replyMsg(" + full.id + ")'><img with=25 height=25 src=\"/salesstatic/customized/img/mail_reply.png\"></button>";
+                            html += "&nbsp;<button href='#' type='button' class='btn btn-default btn-xs' onclick='javascript:delMsg(" + full.id + ")'><img with=25 height=25 src=\"/salesstatic/customized/img/remove.png\"></button>";
+                            html += '</div>'
+                            return html
+                        },
+                        "title": "{% PhraseTag order operation %}",
+                        "width": "140px"
+                    }
+                ]
+            });
+
+            $("#sendMsg").click(function (e) {
+                $.post("home", {
+                    pageAction: 'create',
+                    pageApp: 'modelsrv',
+                    pageParams: 'message',
+                    receiverId: $("#receiver").val(),
+                    text: $("#text").val()
+                }, function (data, result) {
+                    myMessageDt.ajax.reload();
+                    checkMessage();
+                    $("#replyMsgModal").modal("hide");
+                }, 'json').error(function (err) {
+                    alert('{% PhraseTag g_default ajaxError %}');
+                }).complete(function (err) {
+                });
+            });
+
+            $(".sendMsgBtn").click(function (e) {
+                var receiverId = e.currentTarget.getAttribute('receiverId');
+                var receiver = e.currentTarget.getAttribute('receiver');
+                sendMsg(receiverId, receiver);
+            });
+        });
+
+        function sendMsg(receiverId, receiver) {
+            $('#receiver').val([]).trigger('chosen:updated');
+            $("#receiver option[value='" + receiverId + "']").prop('selected', true);
+            $("#receiver").chosen();
+            $("#receiver").trigger('chosen:updated');
+            $("#replyMsgId").val("");
+            $("#text").val("");
+            $("#replyMsgModal").modal("show");
+        }
+
+        function markMsg(msgId, flag) {
+            $.post("home", {
+                pageAction: 'update',
+                pageApp: 'modelsrv',
+                pageParams: 'message',
+                id: msgId,
+                receiverReadFlag: !flag
+            }, function (data, result) {
+                myMessageDt.ajax.reload();
+                checkMessage();
+            }, 'json').error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+            });
+        }
+
+        function replyMsg(msgId) {
+            $.post("home", {
+                pageAction: 'get',
+                pageApp: 'modelsrv',
+                pageParams: 'message',
+                id: msgId
+            }, function (data, result) {
+                $('#receiver').val([]).trigger('chosen:updated');
+                $("#receiver option[value='" + data.senderId + "']").prop("selected", true);
+                $("#receiver").chosen();
+                $("#receiver").trigger('chosen:updated');
+                $("#text").val("");
+                $("#replyMsgModal").modal("show");
+            }, 'json').error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+            });
+        }
+
+        function delMsg(msgId) {
+            $.post("home", {
+                pageAction: 'update',
+                pageApp: 'modelsrv',
+                pageParams: 'message',
+                id: msgId,
+                receiverDeleteFlag: true
+            }, function (data, result) {
+                myMessageDt.ajax.reload();
+                checkMessage();
+            }, 'json').error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+            });
+        }
+
+        function getUserList() {
+            $.ajax({
+                url: 'ajax?t=userlist',
+                dataType: "json",
+                success: function (data) {
+                    userhtml = '';
+                    for (var d in data) {
+                        userhtml += "<div class=\"box col-md-3 col-xs-6\">";
+                        userhtml += "<div class=\"\" style=\"border:1px solid grey;border-radius:4px\">";
+                        userhtml += "&nbsp;&nbsp;<span style=\"font-size: 15px\">";
+                        color = "grey";
+                        if (data[d].isAlive) {
+                            color = "green";
+                        }
+                        userhtml += "<i class=\"glyphicon glyphicon-user " + color + "\"></i> " + data[d].userBpName;
+                        userhtml += "&nbsp;<button class=\"btn btn-default btn-xs\" onclick=\"javascript:sendMsg('" + data[d].userId + "','" + data[d].userBpName + "')\">";
+                        userhtml += "<i class=\"glyphicon glyphicon-share-alt yellow\"></i>";
+                        userhtml += "</button>";
+                        userhtml += "</span><br>";
+                        userhtml += "<span style=\"font-size: 10px\">";
+                        userhtml += "&nbsp;&nbsp;" + data[d].mobile + "<br>";
+                        userhtml += "&nbsp;&nbsp;" + data[d].email + "</span>";
+                        userhtml += "</div>";
+                        userhtml += "</div>";
+                    }
+                    $("#userlist").html(userhtml);
+                    myMessageDt.ajax.reload();
+                },
+                cache: false
+            }).error(function (e) {
+                window.clearInterval(getUserListTimerId)
+            });
+        }
+        getUserList();
+        var getUserListTimerId = window.setInterval(getUserList, 5000);
+    </script>
+{% endblock %}
+

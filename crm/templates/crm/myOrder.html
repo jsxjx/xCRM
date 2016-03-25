@@ -1,0 +1,634 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load FormTag %}
+    {% load PhraseTag %}
+    {% load EChartTag %}
+    {% load HighChartTag %}
+    {% load AuthRequireTag %}
+    {% load staticfiles %}
+    {% AuthRequireTag profile P_SALE_LEADER \ %}
+    <div class="row">
+        <div class="col-md-12">
+            {% BlockTag g_default salesOv N Y N %}
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="box col-md-12 col-xs-12">
+                        <ul id="tab" class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#history_15days"
+                                                                      data-toggle="tab">{% PhraseTag g_default history_15days %}</a>
+                            </li>
+                            {#                <li role="presentation"><a href="#history_all" data-toggle="tab">{% PhraseTag g_default all %}</a></li>#}
+                        </ul>
+                    </div>
+                    <div class="box col-md-12 col-xs-12">
+                        <div class="tab-content">
+                            <div id="history_15days" class="row tab-pane active">
+                                {#                  <div class="box col-md-12 col-xs-12">#}
+                                {#                    <ul id="tab" class="nav nav-tabs" role="tablist">#}
+                                {#                      {% for report in reportTab %}#}
+                                {#                        <li role="presentation" class="{% if forloop.first %}active{% endif %}">#}
+                                {#                          <a href="#report_{{ forloop.counter }}" lass="well top-block" data-toggle="tab">#}
+                                {#                            <div>{{ report.title }} {{ report.count }}</div>#}
+                                {#                          </a>#}
+                                {#                        </li>#}
+                                {#                      {% endfor %}#}
+                                {#                    </ul>#}
+                                {#                  </div>#}
+                                {#                  <div class="box col-md-12 col-xs-12">#}
+                                {#                    <div class="tab-content">#}
+                                {#                    {% for report in reportTab %}#}
+                                {#                      <div id="report_{{ forloop.counter }}" class="row tab-pane {% if forloop.first %}active{% endif %}">#}
+                                {#                      {% for record in report.records %}#}
+                                {#                        <a href="javascript:viewOrderInModal({{record.id}})">{{ record.customer }}</a>  {{ record.empResp }}#}
+                                {#                      {% endfor %}#}
+                                {#                      </div>#}
+                                {#                    {% endfor %}#}
+                                {##}
+                                {#                  </div>#}
+
+                                {% for k,v in stageList.items %}
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <a data-toggle="tooltip" title="" class="well top-block" href="#">
+                                                    <div>{{ v.title }} {{ v.count }}</div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                {% for record in v.records %}
+                                                    <a href="javascript:viewOviewOrderInModal({{ record.id }})">{{ record.customer }}</a>
+                                                    {{ record.empResp }}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                {% for k,v in statusList.items %}
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12">
+                                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                                <a data-toggle="tooltip" title="" class="well top-block" href="#">
+                                                    <div>{{ v.title }} {{ v.count }}</div>
+                                                </a>
+                                            </div>
+                                            <div class="col-md-10 col-sm-10 col-xs-10">
+                                                {% for record in v.records %}
+                                                    <a href="javascript:viewOrderInModal({{ record.id }})">{{ record.customer }}</a>
+                                                    {{ record.empResp }}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                <div class="row">
+                                    <div class="box col-md-12">
+                                        <table class="table table-striped table-condensed table-bordered bootstrap-datatable datatable responsive">
+                                            <thead>
+                                            <tr>
+                                                <th width='20%'>{% PhraseTag order shortName %}</th>
+                                                <th width='10%'>{% PhraseTag g_default updatedBy %}</th>
+                                                <th width='20%'>{% PhraseTag g_default updatedAt %}</th>
+                                                <th width='5%'>{% PhraseTag g_default field %}</th>
+                                                <th width='10%'>{% PhraseTag g_default oldValue %}</th>
+                                                <th width='10%'>{% PhraseTag g_default newValue %}</th>
+                                                <th width='5%'>{% PhraseTag order operation %}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for change in chgListAll %}
+                                                <tr>
+                                                    <td>{{ change.orderDesc }}</td>
+                                                    <td>{{ change.updatedBy }}</td>
+                                                    <td>{{ change.updatedAt }}</td>
+                                                    <td>{{ change.orderField }}</td>
+                                                    <td>{{ change.oldValue }}</td>
+                                                    <td>{{ change.newValue }}</td>
+                                                    <td class="center">
+                                                        <button type="button"
+                                                                onclick="javascript:toNav('commonOrder','view','{{ change.orderId }}')"
+                                                                class="btn btn-success btn-sm"><i
+                                                                class="glyphicon glyphicon-zoom-in icon-white"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% EndBlockTag %}
+        </div>
+    </div>
+
+
+    <!-- OrderDetailViewModal -->
+    <div class="modal fade" id="OrderDetailViewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h3>{% PhraseTag calendar detail %}</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6"><label
+                                for="title">{% PhraseTag order shortName %}</label><input type="text"
+                                                                                          class="form-control"
+                                                                                          id="title" name="title"
+                                                                                          placeholder="" value=""
+                                                                                          readonly></div>
+                        <div class="col-md-6 col-xs-6"><label
+                                for="customer">{% PhraseTag order customer %}</label><input type="text"
+                                                                                            class="form-control"
+                                                                                            id="customer"
+                                                                                            name="customer"
+                                                                                            placeholder="" value=""
+                                                                                            readonly></div>
+                    </div>
+                    <div class="clearfix" style="height:2px"></div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6"><label for="stage">{% PhraseTag order stage %}</label><input
+                                type="text" class="form-control" id="stage" name="stage" placeholder="" value=""
+                                readonly></div>
+                        <div class="col-md-6 col-xs-6"><label
+                                for="channel">{% PhraseTag order channel %}</label><input type="text"
+                                                                                          class="form-control"
+                                                                                          id="channel"
+                                                                                          name="channel"
+                                                                                          placeholder="" value=""
+                                                                                          readonly></div>
+                    </div>
+                    <div class="clearfix" style="height:2px"></div>
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6"><label
+                                for="empResp">{% PhraseTag order empResp %}</label><input type="text"
+                                                                                          class="form-control"
+                                                                                          id="empResp"
+                                                                                          name="empResp"
+                                                                                          placeholder="" value=""
+                                                                                          readonly></div>
+                        <div class="col-md-3 col-xs-3"><label
+                                for="priority">{% PhraseTag order priority %}</label><input type="text"
+                                                                                            class="form-control"
+                                                                                            id="priority"
+                                                                                            name="priority"
+                                                                                            placeholder="" value=""
+                                                                                            readonly></div>
+                        <div class="col-md-3 col-xs-3"><label
+                                for="status">{% PhraseTag order status %}</label><input type="text"
+                                                                                        class="form-control"
+                                                                                        id="status" name="status"
+                                                                                        placeholder="" value=""
+                                                                                        readonly></div>
+                    </div>
+                    <div class="clearfix" style="height:2px"></div>
+                    <div class="row">
+                        <div class="col-md-3 col-xs-3"><label
+                                for="travelAmount">{% PhraseTag order travelAmount %}</label><input type="text"
+                                                                                                    class="form-control"
+                                                                                                    id="travelAmount"
+                                                                                                    name="travelAmount"
+                                                                                                    placeholder=""
+                                                                                                    value=""
+                                                                                                    readonly></div>
+                        <div class="col-md-3 col-xs-3"><label
+                                for="amount">{% PhraseTag order amount %}</label><input type="text"
+                                                                                        class="form-control"
+                                                                                        id="amount" name="amount"
+                                                                                        placeholder="" value=""
+                                                                                        readonly></div>
+                        <div class="col-md-3 col-xs-3"><label
+                                for="customerType">{% PhraseTag order customerType %}</label><input type="text"
+                                                                                                    class="form-control"
+                                                                                                    id="customerType"
+                                                                                                    name="customerType"
+                                                                                                    placeholder=""
+                                                                                                    value=""
+                                                                                                    readonly></div>
+                        <div class="col-md-3 col-xs-3"><label
+                                for="settleType">{% PhraseTag order settleType %}</label><input type="text"
+                                                                                                class="form-control"
+                                                                                                id="settleType"
+                                                                                                name="settleType"
+                                                                                                placeholder=""
+                                                                                                value="" readonly>
+                        </div>
+                    </div>
+                    <div class="clearfix" style="height:2px"></div>
+                    <div class="row">
+                        <div class="col-md-12 col-xs-12">
+                            <label for="text">{% PhraseTag order text %}</label>
+
+                            <div class="well" id="text" style="height: 150px; overflow:auto"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-default btn-sm" data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End of OrderDetailViewModal -->
+    {% for i in list %}
+        <div class="row">
+            <div class="box col-md-12">
+                {% BlockTag i.name N Y N %}
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="box col-md-12 col-xs-12">
+                            <ul id="tab" class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#chart{{ forloop.counter }}"
+                                                                          data-toggle="tab">{% PhraseTag order orderChart %}</a>
+                                </li>
+                                <li role="presentation"><a href="#detail{{ forloop.counter }}"
+                                                           data-toggle="tab">{% PhraseTag order orderList %}</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="box col-md-12 col-xs-12">
+                            <div class="tab-content">
+                                <div id="chart{{ forloop.counter }}" class="row tab-pane active">
+                                    <div class="box col-md-4 col-xs-4">
+                                        {% HighChartTag chart 200px i.pieOpt %}
+                                    </div>
+                                    <div class="box col-md-8 col-xs-8">
+                                        {% EChartTag chart 200px i.stackOpt %}
+                                    </div>
+                                </div>
+                                <div id="detail{{ forloop.counter }}" class="row tab-pane">
+                                    <div class="box col-md-12 col-xs-12">
+                                        <table id="detailOrderList{{ forloop.counter }}"
+                                               class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                                               cellspacing="0" width="100%">
+                                        </table>
+                                        <script>
+                                            $(document).ready(function () {
+                                                var dt{{ forloop.counter }} = $('#detailOrderList{{ forloop.counter }}').DataTable({
+                                                    {% PhraseTag g_default dataTableComm %}
+                                                    "aaSorting": [],
+                                                    "processing": true,
+                                                    "serverSide": false,
+                                                    "ajax": {
+                                                        url: '/crm/ajax?t=myorders&empResp={{ i.bpId }}',
+                                                        dataSrc: '',
+                                                        error: function (xhr, textStatus, error) {
+                                                            {#                                                            alert(error);#}
+                                                        }
+                                                    },
+                                                    "columns": [
+                                                        {
+                                                            "class": "details-control",
+                                                            "orderable": false,
+                                                            "data": null,
+                                                            "defaultContent": "",
+                                                            "width": '3%'
+                                                        },
+                                                        {
+                                                            "data": "shortName",
+                                                            "title": "{% PhraseTag order shortName %}",
+                                                            "width": '20%'
+                                                        },
+                                                        {
+                                                            "data": "channel",
+                                                            "title": "{% PhraseTag order channel %}",
+                                                            "width": '10%'
+                                                        },
+                                                        {
+                                                            "data": "stage",
+                                                            "title": "{% PhraseTag order stage %}",
+                                                            "width": '5%'
+                                                        },
+                                                        {
+                                                            "data": "status",
+                                                            "title": "{% PhraseTag order status %}",
+                                                            "width": '5%'
+                                                        },
+                                                        {
+                                                            "data": "travelAmount",
+                                                            "title": "{% PhraseTag order travelAmount %}",
+                                                            "width": '12%'
+                                                        },
+                                                        {
+                                                            "data": "goLiveDate",
+                                                            "title": "{% PhraseTag order goLiveDate %}",
+                                                            "width": '10%'
+                                                        },
+                                                        {
+                                                            "data": "latestText",
+                                                            "title": "{% PhraseTag order text %}",
+                                                            "width": '20%'
+                                                        },
+                                                        {
+                                                            "sortable": false,
+                                                            "render": function (data, type, full, meta) {
+                                                                return "<button type='button' class='btn btn-success btn-sm' onclick='javascript:toNav(\"commonOrder\",\"view\",\"" + full.id + "\")'><i class=\"glyphicon glyphicon-zoom-in icon-white\"></i></button>"
+                                                            },
+                                                            "title": "{% PhraseTag order operation %}",
+                                                            "width": "5%"
+                                                        }
+                                                    ]
+                                                });
+
+                                                // Array to track the ids of the details displayed rows
+                                                var detailRows = [];
+
+                                                $('#detailOrderList{{ forloop.counter }} tbody').on('click', 'tr td.details-control', function () {
+                                                    var tr = $(this).closest('tr');
+                                                    var row = dt{{ forloop.counter }}.row(tr);
+                                                    var idx = $.inArray(tr.attr('id'), detailRows);
+
+                                                    if (row.child.isShown()) {
+                                                        tr.removeClass('details');
+                                                        row.child.hide();
+
+                                                        // Remove from the 'open' array
+                                                        detailRows.splice(idx, 1);
+                                                    }
+                                                    else {
+                                                        tr.addClass('details');
+                                                        row.child(format(row.data())).show();
+
+                                                        // Add to the 'open' array
+                                                        if (idx === -1) {
+                                                            detailRows.push(tr.attr('id'));
+                                                        }
+                                                    }
+                                                });
+
+                                                // On each draw, loop over the `detailRows` array and show any child rows
+                                                dt{{ forloop.counter }}.on('draw', function () {
+                                                    $.each(detailRows, function (i, id) {
+                                                        $('#' + id + ' td.details-control').trigger('click');
+                                                    });
+                                                });
+                                            });
+                                        </script>
+                                    </div>
+                                </div>
+                                <div id="statics{{ forloop.counter }}" class="row tab-pane">
+                                    {% for k,v in i.dashboard.statusStatics.items %}
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <a data-toggle="tooltip" title="" class="well top-block" href="#">
+                                                <div>{{ k }}</div>
+                                                <div>{{ v }}</div>
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                    {% for k,v in i.dashboard.stageStatics.items %}
+                                        <div class="col-md-2 col-sm-2 col-xs-2">
+                                            <a data-toggle="tooltip" title="" class="well top-block" href="#">
+                                                <div>{{ k }}</div>
+                                                <div>{{ v }}</div>
+                                            </a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% EndBlockTag %}
+            </div>
+        </div>
+    {% endfor %}
+    <script>
+        function viewOrderInModal(orderId) {
+            $.post("home", {
+                pageAction: 'view',
+                pageApp: 'ordersvr',
+                pageParams: orderId
+            }, function (data, result) {
+                $('#quickViewBtn').attr("disabled", false);
+                var res = jQuery.parseJSON(data);
+                if (result == 'success' && res.code == 0) {
+                    $("#title").val(res.order.title)
+                    $("#customer").val(res.order.customer)
+                    $("#stage").val(res.order.stage)
+                    $("#channel").val(res.order.channel)
+                    $("#empResp").val(res.order.empResp)
+                    $("#priority").val(res.order.priority)
+                    $("#status").val(res.order.status)
+                    $("#travelAmount").val(res.order.travelAmount)
+                    $("#amount").val(res.order.amount)
+                    $("#customerType").val(res.order.customerType)
+                    $("#settleType").val(res.order.settleType)
+                    $("#goLiveDate").val(res.order.goLiveDate)
+                    $("#text").html(res.order.text)
+                    $('#OrderDetailViewModal').modal('show');
+                } else {
+                    alert('An error returned from host')
+                }
+            }).error(function (err) {
+                alert('{% PhraseTag g_default ajaxError %}');
+            }).complete(function (err) {
+            });
+        }
+    </script>
+    {% EndAuthRequireTag %}
+    <div class="row">
+        <div class="col-md-4 col-xs-4">
+            {% BlockTag g_default stagepiechart N Y N %}
+            {% HighChartTag pie 250px pieOpt %}
+            {% EndBlockTag %}
+        </div>
+        <div class="col-md-8 col-xs-8">
+            {% BlockTag g_default stagestackchart N Y N %}
+            {% EChartTag stack 250px stackOpt %}
+            {% EndBlockTag %}
+        </div>
+    </div>
+    <div class="clearfix"><br></div>
+    {% BlockTag g_default myOrderList N Y N %}
+
+    <button class="btn btn-primary btn-sm"
+            onclick="javascript:toNav('xlsoutput','','','','N')">{% PhraseTag g_default xlsoutput %}</button>
+    <div class="clearfix"><br></div>
+    <table id="myOrderList"
+           class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+           cellspacing="0" width="100%">
+    </table>
+    {% EndBlockTag %}
+    </div>
+    </div>
+
+
+    <div class="modal" id="orderDelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalabel">{% PhraseTag g_default caution %}</h4>
+
+                    <div class="modal-body">
+                        {% PhraseTag order delOrderPrompt %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm"
+                                data-dismiss="modal">{% PhraseTag g_default cancel %}</button>
+                        <button id="orderDelButton" type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="glyphicon glyphicon-trash icon-white"></i> {% PhraseTag g_default delete %}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function format(d) {
+                var accountsHtml = ''
+                if (d.accounts.length != 0) {
+                    for (i in d.accounts) {
+                        accountsHtml += '<br>' + d.accounts[i].accountName + ':' + d.accounts[i].accountNumber
+                        tableHtml = "<table class=\"table table-striped table-condensed table-bordered\"> \
+                    <thead> \
+                    <tr> \
+                        <th width='20%'></th> \
+                        <th width='20%'>本年</th> \
+                        <th width='20%'>本季度</th> \
+                        <th width='20%'>本月</th> \
+                        <th width='20%'>本周</th> \
+                    </tr> \
+                    </thead> \
+                    <tbody> \
+                    <tr> \
+                        <td>数量</td> \
+                        <td>{0}</td> \
+                        <td>{1}</td> \
+                        <td>{2}</td> \
+                        <td>{3}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>交易量</td> \
+                        <td>{4}</td> \
+                        <td>{5}</td> \
+                        <td>{6}</td> \
+                        <td>{7}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>山航交易量</td> \
+                        <td>{8}</td> \
+                        <td>{9}</td> \
+                        <td>{10}</td> \
+                        <td>{11}</td> \
+                    </tr> \
+                    </tbody> \
+                </table>"
+
+                        tableHtml = String.format(tableHtml,
+                                '总：' + d.accounts[i].statistics.year.totalCount + '<br>订：' + d.accounts[i].statistics.year.totalDBCount + '<br>退：' + d.accounts[i].statistics.year.totalCRCount,
+                                '总：' + d.accounts[i].statistics.season.totalCount + '<br>订：' + d.accounts[i].statistics.season.totalDBCount + '<br>退：' + d.accounts[i].statistics.season.totalCRCount,
+                                '总：' + d.accounts[i].statistics.month.totalCount + '<br>订：' + d.accounts[i].statistics.month.totalDBCount + '<br>退：' + d.accounts[i].statistics.month.totalCRCount,
+                                '总：' + d.accounts[i].statistics.week.totalCount + '<br>订：' + d.accounts[i].statistics.week.totalDBCount + '<br>退：' + d.accounts[i].statistics.week.totalCRCount,
+                                '总：' + d.accounts[i].statistics.year.totalSum + '<br>订：' + d.accounts[i].statistics.year.totalDBSum + '<br>退：' + d.accounts[i].statistics.year.totalCRSum,
+                                '总：' + d.accounts[i].statistics.season.totalSum + '<br>订：' + d.accounts[i].statistics.season.totalDBSum + '<br>退：' + d.accounts[i].statistics.season.totalCRSum,
+                                '总：' + d.accounts[i].statistics.month.totalSum + '<br>订：' + d.accounts[i].statistics.month.totalDBSum + '<br>退：' + d.accounts[i].statistics.month.totalCRSum,
+                                '总：' + d.accounts[i].statistics.week.totalSum + '<br>订：' + d.accounts[i].statistics.week.totalDBSum + '<br>退：' + d.accounts[i].statistics.week.totalCRSum,
+                                '总：' + d.accounts[i].statistics.year.totalSHSum + '<br>订：' + d.accounts[i].statistics.year.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.year.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.season.totalSHSum + '<br>订：' + d.accounts[i].statistics.season.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.season.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.month.totalSHSum + '<br>订：' + d.accounts[i].statistics.month.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.month.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.week.totalSHSum + '<br>订：' + d.accounts[i].statistics.week.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.week.totalSHCRSum
+                        );
+                        accountsHtml += '<br>' + tableHtml
+                    }
+                } else {
+                    accountsHtml = '无'
+                }
+
+                return '山旅通账户信息：' + accountsHtml;
+            }
+
+            $(document).ready(function () {
+                var dt = $('#myOrderList').DataTable({
+                    {% PhraseTag g_default dataTableComm %}
+                    "aaSorting": [],
+                    "processing": true,
+                    "serverSide": false,
+                    "ajax": {
+                        url: '/crm/ajax?t=myorders',
+                        dataSrc: '',
+                        error: function (xhr, textStatus, error) {
+                            {#                            alert(error);#}
+                        }
+                    },
+                    "columns": [
+                        {
+                            "class": "details-control",
+                            "orderable": false,
+                            "data": null,
+                            "defaultContent": "",
+                            "width": '3%'
+                        },
+                        {"data": "shortName", "title": "{% PhraseTag order shortName %}", "width": '20%'},
+                        {"data": "channel", "title": "{% PhraseTag order channel %}", "width": '10%'},
+                        {"data": "stage", "title": "{% PhraseTag order stage %}", "width": '5%'},
+                        {"data": "status", "title": "{% PhraseTag order status %}", "width": '5%'},
+                        {"data": "travelAmount", "title": "{% PhraseTag order travelAmount %}", "width": '12%'},
+                        {"data": "goLiveDate", "title": "{% PhraseTag order goLiveDate %}", "width": '10%'},
+                        {"data": "latestText", "title": "{% PhraseTag order text %}", "width": '20%'},
+                        {
+                            "sortable": false,
+                            "render": function (data, type, full, meta) {
+                                return "<button type='button' class='btn btn-success btn-sm' onclick='javascript:toNav(\"commonOrder\",\"view\",\"" + full.id + "\")'><i class=\"glyphicon glyphicon-zoom-in icon-white\"></i></button>"
+                            },
+                            "title": "{% PhraseTag order operation %}",
+                            "width": "5%"
+                        }
+                    ]
+                });
+
+                // Array to track the ids of the details displayed rows
+                var detailRows = [];
+
+                $('#myOrderList tbody').on('click', 'tr td.details-control', function () {
+                    var tr = $(this).closest('tr');
+                    var row = dt.row(tr);
+                    var idx = $.inArray(tr.attr('id'), detailRows);
+
+                    if (row.child.isShown()) {
+                        tr.removeClass('details');
+                        row.child.hide();
+
+                        // Remove from the 'open' array
+                        detailRows.splice(idx, 1);
+                    }
+                    else {
+                        tr.addClass('details');
+                        row.child(format(row.data())).show();
+
+                        // Add to the 'open' array
+                        if (idx === -1) {
+                            detailRows.push(tr.attr('id'));
+                        }
+                    }
+                });
+
+                // On each draw, loop over the `detailRows` array and show any child rows
+                dt.on('draw', function () {
+                    $.each(detailRows, function (i, id) {
+                        $('#' + id + ' td.details-control').trigger('click');
+                    });
+                });
+            });
+
+            $(function () {
+                $("#orderDelModal").on("show.bs.modal", function (event) {
+                    var button = $(event.relatedTarget)
+                    var modelId = button.data("whatever")
+                    var modal = $(this)
+                    $("#orderDelButton").on('click', function () {
+                        toNav('deleteOrder', '', modelId)
+                    })
+                });
+            })
+        </script>
+{% endblock %}

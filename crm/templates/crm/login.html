@@ -1,0 +1,46 @@
+{% extends 'crm/layout/loginLayout.html' %}
+{% load PhraseTag %}
+{% load staticfiles %}
+{% block workarea %}
+    <div class="" style="height: 100%">
+        <div class="row sitebg">
+            <div class="row" style="height: 20%">
+            </div>
+            <div class="col-md-5 center login-box" style="background-color: rgba(255,255,255,0.5);">
+                <div class="" style="height: auto; padding-top: 30px; padding-bottom: 10px;">
+{#                    <img src="{% static "customized/img/logo.png" %}"/>#}
+                </div>
+                <div class="" style="height: 40px">
+                    <h3>{% PhraseTag g_default welcomeTitle %}</h3>
+                </div>
+                {% if errorDesc %}
+                    <div class="alert alert-danger">
+                        {{ errorDesc }}
+                    </div>
+                {% endif %}
+                <form class="" action="login" method="post">
+                    {% csrf_token %}
+                    <fieldset>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input type="text" name="username" class="form-control"
+                                   placeholder="{% PhraseTag g_default loginUserNameText %}">
+                        </div>
+                        <div class="clearfix"></div>
+                        <br>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input type="password" name="password" class="form-control"
+                                   placeholder="{% PhraseTag g_default loginPasswordText %}">
+                        </div>
+                        <div class="clearfix"></div>
+                        <p class="center col-md-5">
+                            <button type="submit"
+                                    class="btn btn-primary">{% PhraseTag g_default loginText %}</button>
+                        </p>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

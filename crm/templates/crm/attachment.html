@@ -1,0 +1,160 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load NavMenuTag %}
+    {% load NavMenuItemTag %}
+    {% load FormTag %}
+    {% load AuthRequireTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% AuthRequireTag auth DocumentAccess 8 %}
+    <button class="uploadBtn btn btn-primary btn-sm"><i
+            class="glyphicon glyphicon-upload icon-white"></i> {% PhraseTag g_default upload %}</button>
+    <br>
+    <br>
+    {% EndAuthRequireTag %}
+    {% AuthRequireTag auth DocumentAccess 4 %}
+    <table id="fileList"
+           class="table table-striped table-condensed table-bordered bootstrap-datatable datatable responsive">
+    </table>
+    <div class="modal" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalabel">{% PhraseTag g_default addNewFile %}</h4>
+
+                    <div class="modal-body">
+                        <form name="fileupload" action="home" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input id="navForm_pageApp" type="hidden" name="pageApp" value="attachment">
+                            <input id="navForm_pageAction" type="hidden" name="pageAction" value="upload">
+                            <input id="navForm_pageParams" type="hidden" name="pageParams" value="">
+                            <input id="navForm_pageMode" type="hidden" name="pageMode" value="">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="description">{% PhraseTag order description %}</label>
+                                    <input type="text" class="form-control" id="description" name="description"
+                                           placeholder="" value="">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="version">{% PhraseTag g_default version %}</label>
+                                    <input type="text" class="form-control" id="version" name="version"
+                                           placeholder="" value="">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="file">{% PhraseTag g_default file %}</label>
+                                    <input type="file" class="" id="description" name="file"
+                                           placeholder="" value="">
+                                </div>
+                            </div>
+                            <div class="clearfix" style="height:2px"></div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input class="btn btn-primary btn-sm" type='submit'
+                                           value='{% PhraseTag g_default upload %}'/>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm"
+                                data-dismiss="modal">{% PhraseTag g_default cancel %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="fileDelModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalabel">{% PhraseTag g_default caution %}</h4>
+                    <input type="hidden" id="fileId" name="fileId">
+
+                    <div class="modal-body">
+                        {% PhraseTag order delFilePrompt %}
+                    </div>
+                    <div class="modal-footer">
+                        <button id="fileDelButton" type="button" class="btn btn-danger btn-sm" data-dismiss="modal"><i
+                                class="glyphicon glyphicon-trash icon-white"></i> {% PhraseTag g_default delete %}
+                        </button>
+                        <button type="button" class="btn btn-default btn-sm"
+                                data-dismiss="modal">{% PhraseTag g_default cancel %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function delFile(fileId) {
+            $('#fileId').val(fileId);
+            $('#fileDelModal').modal('show');
+        }
+
+        $(function () {
+            var fileDt = $('#fileList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=documentlist',
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                    }
+                },
+                columns: [
+                    {data: 'description', "title": "{% PhraseTag g_default description %}", "width": '30%'},
+                    {data: 'version', "title": "{% PhraseTag g_default version %}", "width": '20%'},
+                    {
+                        "sortable": false,
+                        "render": function (data, type, full, meta) {
+                            html = "<button type='button' class='btn btn-success btn-sm' onclick='javascript:toNav(\"attachment\",\"download\",\"" + full.id + "\",\"\",\"N\")'><i class=\"glyphicon glyphicon-download icon-white\"></i></button>";
+                            {% AuthRequireTag auth DocumentAccess 1 %}
+                            html += " <button type='button' class='btn btn-danger btn-sm' onclick='javascript:delFile(" + full.id + ")'><i class=\"glyphicon glyphicon-trash icon-white\"></i></button>";
+                            {% EndAuthRequireTag%}
+                            return html
+                        },
+                        "title": "{% PhraseTag order operation %}",
+                        "width": "5%"
+                    }
+                ]
+            });
+
+            $('.uploadBtn').click(function (event) {
+                $('#fileUploadModal').modal('show');
+            });
+
+            $('#fileDelButton').click(function (event) {
+                $('#fileDelButton').attr("disabled", true);
+                $.post("home", {
+                    pageAction: 'delete',
+                    pageApp: 'attachment',
+                    pageParams: $('#fileId').val()
+                }, function (data, result) {
+                    $('#fileDelButton').attr("disabled", false);
+                    if (result == 'success') {
+                        fileDt.ajax.reload();
+                    }
+                    $('#fileDelModal').modal('hide');
+                }).error(function (err) {
+                    alert('{% PhraseTag g_default ajaxError %}');
+                }).complete(function (err) {
+                    $('#fileDelButton').attr("disabled", false);
+                });
+            })
+        })
+    </script>
+    {% EndAuthRequireTag %}
+{% endblock %}

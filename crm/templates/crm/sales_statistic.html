@@ -1,0 +1,805 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load BlockTag2 %}
+    {% load NavMenuTag %}
+    {% load NavMenuItemTag %}
+    {% load FormTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    <script>
+        $(function () {
+            var area = '';
+            var type = 'sales';
+            var salesmanDt = $('#salesmanList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=salesmanlist&orgId=' + area,
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                        {#                        alert(error);#}
+                    }
+                },
+                "columns": [
+                    {
+                        "class": "details-control",
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": "",
+                        "width": '20px'
+                    },
+                    {"data": "name", "title": "{% PhraseTag order empResp %}", "width": '25%'},
+                    {"data": "onlineRate", "title": "{% PhraseTag order onlineRate %}", "width": '25%'},
+                    {"data": "pendingRate", "title": "{% PhraseTag order pendingRate %}", "width": '25%'},
+                    {"data": "newOfMonthCount", "title": "{% PhraseTag order newInMonth %}", "width": '25%'}
+                ]
+            });
+
+            var salesmanDtDetailRows = [];
+            $('#salesmanList tbody').on('click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = salesmanDt.row(tr);
+                var idx = $.inArray(tr.attr('id'), salesmanDtDetailRows);
+                if (row.child.isShown()) {
+                    tr.removeClass('details');
+                    row.child.hide();
+                    salesmanDtDetailRows.splice(idx, 1);
+                }
+                else {
+                    tr.addClass('details');
+
+                    {#                    html = "<IFRAME ID=\"Frame1\" SRC=\""+  'tile?t=salestagerpt&bpId=' + row.data().id  +"\" allowTransparency=\"true\" frameborder=\"0\" width=\"100%\" height=\"100%\" scrolling=\"yes\"></IFRAME>"#}
+                    {#                    row.child(html).show()#}
+
+                    $.ajax({
+                        url: 'tile?t=salestagerpt&bpId=' + row.data().id,
+                        dataType: "html",
+                        success: function (data) {
+                            row.child(data).show()
+                        }
+                    });
+                    if (idx === -1) {
+                        salesmanDtDetailRows.push(tr.attr('id'));
+                    }
+                }
+            });
+
+            salesmanDt.on('draw', function () {
+                $.each(salesmanDtDetailRows, function (i, id) {
+                    $('#' + id + ' td.details-control').trigger('click');
+                });
+            });
+
+            var accountDt = $('#accountList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=accountlist&orgId=' + area,
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                        {#                        //alert(error);#}
+                    }
+                },
+                "columns": [
+                    {
+                        "class": "details-control",
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": "",
+                        "width": '20px'
+                    },
+                    {
+                        "data": "accountName",
+                        "title": "{% PhraseTag order name %}",
+                        "width": '15%'
+                    },
+                    {
+                        "data": "accountNumber",
+                        "title": "{% PhraseTag g_default cardNumber %}",
+                        "width": '10%'
+                    },
+                    {
+                        "data": "statistics.year.totalSum",
+                        "title": "{% PhraseTag g_default thisYear %}",
+                        "width": '10%'
+                    },
+                    {
+                        "data": "statistics.season.totalSum",
+                        "title": "{% PhraseTag g_default thisSeason %}",
+                        "width": '10%'
+                    },
+                    {
+                        "data": "statistics.month.totalSum",
+                        "title": "{% PhraseTag g_default thisMonth %}",
+                        "width": '10%'
+                    },
+                    {
+                        "data": "statistics.week.totalSum",
+                        "title": "{% PhraseTag g_default thisWeek %}",
+                        "width": '10%'
+                    },
+                    {
+                        "data": "statistics.custDate.totalSum",
+                        "title": "{% PhraseTag g_default custDate %}",
+                        "width": '30%'
+                    }
+                ]
+            });
+
+            var accountDtDetailRows = [];
+            $('#accountList tbody').on('click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = accountDt.row(tr);
+                var idx = $.inArray(tr.attr('id'), accountDtDetailRows);
+                if (row.child.isShown()) {
+                    tr.removeClass('details');
+                    row.child.hide();
+                    accountDtDetailRows.splice(idx, 1);
+                }
+                else {
+                    tr.addClass('details');
+                    row.child(accountDtFormat(row.data())).show();
+                    if (idx === -1) {
+                        accountDtDetailRows.push(tr.attr('id'));
+                    }
+                }
+            });
+
+            accountDt.on('draw', function () {
+                $.each(accountDtDetailRows, function (i, id) {
+                    $('#' + id + ' td.details-control').trigger('click');
+                });
+            });
+
+            var tmcDt = $('#tmcList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [[2, 'desc']],
+                "processing": true,
+                "serverSide": false,
+                "ajax": {
+                    url: '/crm/ajax?t=tmclist',
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                        {#                        //alert('tmc '+error);#}
+                    }
+                },
+                "columns": [
+                    {
+                        "class": "details-control",
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": "",
+                        "width": '20px'
+                    },
+                    {
+                        "sortable": true,
+                        "data": "name",
+                        "title": "{% PhraseTag g_default name %}",
+                        "width": '100px'
+                    },
+                    {
+                        "data": "accountsCount",
+                        "title": "{% PhraseTag g_default corpCount %}",
+                        "width": '80px'
+                    },
+                    {#                    {"data": "district", "title": "{% PhraseTag g_default district %}", "width": '5%'},#}
+                    {"data": "empRespName", "title": "{% PhraseTag order empResp %}", "width": '80px'},
+                    {
+                        "sortable": true,
+                        "data": "touched",
+                        "render": function (data, type, full, meta) {
+                            if (full.touched) {
+                                return "<i class=\"glyphicon glyphicon-ok  green\"> 已触达</i>"
+                            } else {
+                                return "<i class=\"glyphicon glyphicon-remove red\"> 未触达</i>"
+                            }
+                        },
+                        "title": "{% PhraseTag g_default touched %}",
+                        "width": "100px"
+                    },
+                    {
+                        "sortable": true,
+                        "data": "signed",
+                        "render": function (data, type, full, meta) {
+                            if (full.signed) {
+                                return "<i class=\"glyphicon glyphicon-ok green\"> 已签约</i>"
+                            } else {
+                                return "<i class=\"glyphicon glyphicon-remove red\"> 未签约</i>"
+                            }
+                        },
+                        "title": "{% PhraseTag g_default signed %}",
+                        "width": "100px"
+                    },
+                    {
+                        "sortable": true,
+                        "data": "connected",
+                        "render": function (data, type, full, meta) {
+                            if (full.connected) {
+                                return "<i class=\"glyphicon glyphicon-ok  green\"> 已对接</i>"
+                            } else {
+                                return "<i class=\"glyphicon glyphicon-remove red\"> 未对接</i>"
+                            }
+                        },
+                        "title": "{% PhraseTag g_default connected %}",
+                        "width": "100px"
+                    },
+                    {"data": "text", "title": "{% PhraseTag order text %}", "width": ''},
+                    {
+                        "sortable": false,
+                        "render": function (data, type, full, meta) {
+                            return "<button class=\"btn btn-primary btn-sm\" onclick=\"javascript:showTmcModal('" + full.id + "')\">{% PhraseTag g_default edit %}</button>"
+                        },
+                        "title": "{% PhraseTag order operation %}",
+                        "width": "15px"
+                    }
+                ]
+            });
+
+            var tmcDtDetailRows = [];
+
+            $('#tmcList tbody').on('click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = tmcDt.row(tr);
+                var idx = $.inArray(tr.attr('id'), tmcDtDetailRows);
+
+                if (row.child.isShown()) {
+                    tr.removeClass('details');
+                    row.child.hide();
+                    tmcDtDetailRows.splice(idx, 1);
+                }
+                else {
+                    tr.addClass('details');
+                    row.child(tmcDtFormat(row.data())).show();
+                    if (idx === -1) {
+                        detailRows.push(tr.attr('id'));
+                    }
+                }
+            });
+
+            tmcDt.on('draw', function () {
+                $.each(tmcDtDetailRows, function (i, id) {
+                    $('#' + id + ' td.details-control').trigger('click');
+                });
+            });
+            function salesmanTxnDtFormat(d) {
+                var accountsHtml = '';
+                if (d.accounts.length != 0) {
+                    for (i in d.accounts) {
+                        accountsHtml += '<br>' + d.accounts[i].accountName + ':' + d.accounts[i].accountNumber
+                        tableHtml = "<table class=\"table table-striped table-condensed table-bordered\"> \
+                    <thead> \
+                    <tr> \
+                        <th width='20%'></th> \
+                        <th width='20%'>本年</th> \
+                        <th width='20%'>本季度</th> \
+                        <th width='20%'>本月</th> \
+                        <th width='20%'>本周</th> \
+                    </tr> \
+                    </thead> \
+                    <tbody> \
+                    <tr> \
+                        <td>数量</td> \
+                        <td>{0}</td> \
+                        <td>{1}</td> \
+                        <td>{2}</td> \
+                        <td>{3}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>交易量</td> \
+                        <td>{4}</td> \
+                        <td>{5}</td> \
+                        <td>{6}</td> \
+                        <td>{7}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>山航交易量</td> \
+                        <td>{8}</td> \
+                        <td>{9}</td> \
+                        <td>{10}</td> \
+                        <td>{11}</td> \
+                    </tr> \
+                    </tbody> \
+                </table>"
+
+                        tableHtml = String.format(tableHtml,
+                                '总：' + d.accounts[i].statistics.year.totalCount + '<br>订：' + d.accounts[i].statistics.year.totalDBCount + '<br>退：' + d.accounts[i].statistics.year.totalCRCount,
+                                '总：' + d.accounts[i].statistics.season.totalCount + '<br>订：' + d.accounts[i].statistics.season.totalDBCount + '<br>退：' + d.accounts[i].statistics.season.totalCRCount,
+                                '总：' + d.accounts[i].statistics.month.totalCount + '<br>订：' + d.accounts[i].statistics.month.totalDBCount + '<br>退：' + d.accounts[i].statistics.month.totalCRCount,
+                                '总：' + d.accounts[i].statistics.week.totalCount + '<br>订：' + d.accounts[i].statistics.week.totalDBCount + '<br>退：' + d.accounts[i].statistics.week.totalCRCount,
+                                '总：' + d.accounts[i].statistics.year.totalSum + '<br>订：' + d.accounts[i].statistics.year.totalDBSum + '<br>退：' + d.accounts[i].statistics.year.totalCRSum,
+                                '总：' + d.accounts[i].statistics.season.totalSum + '<br>订：' + d.accounts[i].statistics.season.totalDBSum + '<br>退：' + d.accounts[i].statistics.season.totalCRSum,
+                                '总：' + d.accounts[i].statistics.month.totalSum + '<br>订：' + d.accounts[i].statistics.month.totalDBSum + '<br>退：' + d.accounts[i].statistics.month.totalCRSum,
+                                '总：' + d.accounts[i].statistics.week.totalSum + '<br>订：' + d.accounts[i].statistics.week.totalDBSum + '<br>退：' + d.accounts[i].statistics.week.totalCRSum,
+                                '总：' + d.accounts[i].statistics.year.totalSHSum + '<br>订：' + d.accounts[i].statistics.year.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.year.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.season.totalSHSum + '<br>订：' + d.accounts[i].statistics.season.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.season.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.month.totalSHSum + '<br>订：' + d.accounts[i].statistics.month.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.month.totalSHCRSum,
+                                '总：' + d.accounts[i].statistics.week.totalSHSum + '<br>订：' + d.accounts[i].statistics.week.totalSHDBSum + '<br>退：' + d.accounts[i].statistics.week.totalSHCRSum
+                        );
+                        accountsHtml += '<br>' + tableHtml
+                    }
+                } else {
+                    accountsHtml = '无'
+                }
+
+                return '山旅通账户信息：' + accountsHtml;
+            }
+
+            function accountDtFormat(d) {
+                var accountsHtml = ''
+
+                tableHtml = "<table class=\"table table-striped table-condensed table-bordered\"> \
+                    <thead> \
+                    <tr> \
+                        <th width='20%'></th> \
+                        <th width='20%'>本年</th> \
+                        <th width='20%'>本季度</th> \
+                        <th width='20%'>本月</th> \
+                        <th width='20%'>本周</th> \
+                    </tr> \
+                    </thead> \
+                    <tbody> \
+                    <tr> \
+                        <td>数量</td> \
+                        <td>{0}</td> \
+                        <td>{1}</td> \
+                        <td>{2}</td> \
+                        <td>{3}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>交易量</td> \
+                        <td>{4}</td> \
+                        <td>{5}</td> \
+                        <td>{6}</td> \
+                        <td>{7}</td> \
+                    </tr> \
+                    <tr> \
+                        <td>山航交易量</td> \
+                        <td>{8}</td> \
+                        <td>{9}</td> \
+                        <td>{10}</td> \
+                        <td>{11}</td> \
+                    </tr> \
+                    </tbody> \
+                </table>"
+
+                tableHtml = String.format(tableHtml,
+                        '总：' + d.statistics.year.totalCount + '<br>订：' + d.statistics.year.totalDBCount + '<br>退：' + d.statistics.year.totalCRCount,
+                        '总：' + d.statistics.season.totalCount + '<br>订：' + d.statistics.season.totalDBCount + '<br>退：' + d.statistics.season.totalCRCount,
+                        '总：' + d.statistics.month.totalCount + '<br>订：' + d.statistics.month.totalDBCount + '<br>退：' + d.statistics.month.totalCRCount,
+                        '总：' + d.statistics.week.totalCount + '<br>订：' + d.statistics.week.totalDBCount + '<br>退：' + d.statistics.week.totalCRCount,
+                        '总：' + d.statistics.year.totalSum + '<br>订：' + d.statistics.year.totalDBSum + '<br>退：' + d.statistics.year.totalCRSum,
+                        '总：' + d.statistics.season.totalSum + '<br>订：' + d.statistics.season.totalDBSum + '<br>退：' + d.statistics.season.totalCRSum,
+                        '总：' + d.statistics.month.totalSum + '<br>订：' + d.statistics.month.totalDBSum + '<br>退：' + d.statistics.month.totalCRSum,
+                        '总：' + d.statistics.week.totalSum + '<br>订：' + d.statistics.week.totalDBSum + '<br>退：' + d.statistics.week.totalCRSum,
+                        '总：' + d.statistics.year.totalSHSum + '<br>订：' + d.statistics.year.totalSHDBSum + '<br>退：' + d.statistics.year.totalSHCRSum,
+                        '总：' + d.statistics.season.totalSHSum + '<br>订：' + d.statistics.season.totalSHDBSum + '<br>退：' + d.statistics.season.totalSHCRSum,
+                        '总：' + d.statistics.month.totalSHSum + '<br>订：' + d.statistics.month.totalSHDBSum + '<br>退：' + d.statistics.month.totalSHCRSum,
+                        '总：' + d.statistics.week.totalSHSum + '<br>订：' + d.statistics.week.totalSHDBSum + '<br>退：' + d.statistics.week.totalSHCRSum
+                );
+                accountsHtml += '' + tableHtml
+
+
+                return '山旅通账户信息：' + accountsHtml;
+            }
+
+            function tmcDtFormat(d) {
+                var accountsHtml = ''
+                if (d.accounts.length != 0) {
+                    accountsHtml = "<table class=\"table table-striped table-condensed table-bordered bootstrap-datatable datatable responsive\"><thead><tr><th width='20%'>企业</th><th width='10%'>卡号</th><th width='10%'>本年</th><th width='10%'>本季度</th><th width='10%'>本月</th><th width='10%'>本周</th></tr></thead><tbody>{0}</tbody></table>"
+                    tableData = ""
+                    for (i in d.accounts) {
+                        tableData += String.format("<tr><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td>{4}</td><td>{5}</td></tr>",
+                                d.accounts[i].accountName,
+                                d.accounts[i].accountNumber,
+                                d.accounts[i].statistics.year.totalSum,
+                                d.accounts[i].statistics.season.totalSum,
+                                d.accounts[i].statistics.month.totalSum,
+                                d.accounts[i].statistics.week.totalSum)
+                    }
+                    accountsHtml = String.format(accountsHtml, tableData)
+                } else {
+                    accountsHtml = '无'
+                }
+                return '山旅通账户信息：' + accountsHtml;
+            }
+
+            var salesmanTxnDt = $('#salesmanTxnList').DataTable({
+                {% PhraseTag g_default dataTableComm %}
+                "aaSorting": [],
+                "processing": true,
+                "serverSide": false,
+                "bDestroy": true,
+                "ajax": {
+                    url: '/crm/ajax?t=salesmantxnlist&orgId=' + area,
+                    dataSrc: '',
+                    error: function (xhr, textStatus, error) {
+                    }
+                },
+                "columns": [
+                    {
+                        "class": "details-control",
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": "",
+                        "width": '20px'
+                    },
+                    {"data": "name", "title": "{% PhraseTag order empResp %}", "width": '80px'},
+                    {"data": "accountsCount", "title": "{% PhraseTag g_default corpCount %}", "width": ''},
+                    {
+                        "data": "totalYearSum",
+                        "title": "{% PhraseTag g_default thisYear %}{% PhraseTag g_default transactionTotal %}",
+                        "width": ''
+                    },
+                    {#                    {"data": "totalSeasonSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''},#}
+                    {#                    {"data": "totalMonthSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''},#}
+                    {#                    {"data": "totalWeekSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''},#}
+                    {
+                        "data": "totalSHYearSum",
+                        "title": "{% PhraseTag g_default thisYear %}{% PhraseTag g_default shanhangTotal %}",
+                        "width": ''
+                    },
+                    {#                    {"data": "totalSHSeasonSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''},#}
+                    {#                    {"data": "totalSHMonthSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''},#}
+                    {#                    {"data": "totalSHWeekSum", "title": "{% PhraseTag g_default corpCount %}", "width": ''}#}
+                    {
+                        "data": "totalCustSum",
+                        "title": "{% PhraseTag g_default custDate %}{% PhraseTag g_default transactionTotal %}",
+                        "width": ''
+                    },
+                    {
+                        "data": "totalSHCustSum",
+                        "title": "{% PhraseTag g_default custDate %}{% PhraseTag g_default shanhangTotal %}",
+                        "width": ''
+                    },
+
+
+                ]
+            });
+
+            var salesmanTxnDtDetailRows = [];
+            $('#salesmanTxnList tbody').on('click', 'tr td.details-control', function () {
+                var tr = $(this).closest('tr');
+                var row = salesmanTxnDt.row(tr);
+                var idx = $.inArray(tr.attr('id'), salesmanTxnDtDetailRows);
+                if (row.child.isShown()) {
+                    tr.removeClass('details');
+                    row.child.hide();
+                    salesmanDtDetailRows.splice(idx, 1);
+                }
+                else {
+                    tr.addClass('details');
+                    {#                    $.ajax({#}
+                    {#                        url: 'tile?t=salestagerpt&bpId=' + row.data().id,#}
+                    {#                        dataType: "html",#}
+                    {#                        success: function (data) {#}
+                    {#                            row.child(data).show()#}
+                    {#                        }#}
+                    {#                    });#}
+                    row.child(salesmanTxnDtFormat(row.data())).show()
+                    if (idx === -1) {
+                        salesmanTxnDtDetailRows.push(tr.attr('id'));
+                    }
+                }
+            });
+
+            salesmanTxnDt.on('draw', function () {
+                $.each(salesmanTxnDtDetailRows, function (i, id) {
+                    $('#' + id + ' td.details-control').trigger('click');
+                });
+            });
+
+            $(".dateinput").datepicker({dateFormat: 'yy-mm-dd'});
+            $(".areaBtn").click(function (event) {
+                var target = event.target;
+                $(".areaBtn").removeClass("active");
+                $(target).addClass("active");
+                area = target.getAttribute("value");
+                renderPage(area, type);
+            });
+
+            $(".typeBtn").click(function (event) {
+                var target = event.target;
+                $(".typeBtn").removeClass("active");
+                $(target).addClass("active");
+                type = target.getAttribute("value");
+                renderPage(area, type);
+            });
+
+            $('#reloadBtn').click(function () {
+                var sd = $('#startDate').val()
+                var ed = $('#endDate').val()
+                var newUrl = '/crm/ajax?t=accountlist&orgId=' + area + '&sd=' + sd + '&ed=' + ed
+                accountDt.ajax.url(newUrl)
+                accountDt.ajax.reload();
+            });
+
+            $('#reloadSaleTxnBtn').click(function () {
+                var sd = $('#startDateSaleTxn').val()
+                var ed = $('#endDateSaleTxn').val()
+                var newUrl = '/crm/ajax?t=salesmantxnlist&orgId=' + area + '&sd=' + sd + '&ed=' + ed
+                salesmanTxnDt.ajax.url(newUrl)
+                salesmanTxnDt.ajax.reload();
+            });
+
+            $("#salesView").show();
+            $("#corpView").hide();
+            $("#tmcView").hide();
+            $("#transationView").hide();
+            var corpDtInit = false;
+            var tmcDtInit = false;
+
+            function renderPage(area, type) {
+                if (type == 'sales') {
+                    var newUrl = '/crm/ajax?t=salesmanlist&orgId=' + area;
+                    salesmanDt.ajax.url(newUrl);
+                    salesmanDt.ajax.reload();
+                    $("#salesView").show();
+                    $("#corpView").hide();
+                    $("#tmcView").hide();
+                    $("#transationView").hide();
+                } else if (type == 'corp') {
+                    var newUrl = '/crm/ajax?t=accountlist&orgId=' + area;
+                    accountDt.ajax.url(newUrl);
+                    accountDt.ajax.reload();
+                    $("#salesView").hide();
+                    $("#corpView").show();
+                    $("#tmcView").hide();
+                    $("#transationView").hide();
+                } else if (type == 'tmc') {
+                    $("#salesView").hide();
+                    $("#corpView").hide();
+                    $("#tmcView").show();
+                    $("#transationView").hide();
+                    var newUrl = '/crm/ajax?t=tmclist&orgId=' + area;
+                    tmcDt.ajax.url(newUrl);
+                    tmcDt.ajax.reload();
+                } else if (type == 'transaction') {
+                    $("#salesView").hide();
+                    $("#corpView").hide();
+                    $("#tmcView").hide();
+                    $("#transationView").show();
+                    var newUrl = '/crm/ajax?t=salesmantxnlist&orgId=' + area;
+                    salesmanTxnDt.ajax.url(newUrl);
+                    salesmanTxnDt.ajax.reload();
+                }
+            }
+
+            $('#save').click(function () {
+                $.post("home",
+                        {
+                            pageAction: 'update',
+                            pageApp: 'modelsrv',
+                            pageParams: 'tmc',
+                            id: $('#bpId').val(),
+                            name1: $('#name1').val(),
+                            address: $('#address').val(),
+                            district: $('#district').val(),
+                            empResp: $('#empResp').val(),
+                            touched: $("#ck1").is(':checked'),
+                            signed: $("#ck2").is(':checked'),
+                            connected: $("#ck3").is(':checked'),
+                            text: $("#newText").val()
+                        },
+                        function (data, status) {
+                            $('#bpId').val('');
+                            $('#name1').val('');
+                            $('#address').val('');
+                            $("#newText").val('');
+                            $("#text").html('');
+                            tmcDt.ajax.reload();
+                            $('#tmcModal').modal('hide');
+                        }).error(function (err) {
+                            alert('{% PhraseTag g_default ajaxError %}');
+                        }).complete(function (err) {
+                        });
+            });
+        });
+        function showTmcModal(bpId) {
+            $('#bpId').val(bpId)
+            $.post("home",
+                    {
+                        pageAction: 'get',
+                        pageApp: 'modelsrv',
+                        pageParams: 'tmc',
+                        id: bpId
+                    },
+                    function (data) {
+                        jsonData = jQuery.parseJSON(data);
+                        $('#name1').val(jsonData.name);
+                        $('#address').val(jsonData.address);
+                        $("#district option[value='" + jsonData.district + "']").attr("selected", "selected");
+                        $("#district").trigger("chosen:updated");
+                        $("#empResp option[value='" + jsonData.empResp + "']").attr("selected", "selected");
+                        $("#empResp").trigger("chosen:updated");
+                        $("#ck1").attr("checked", jsonData.touched);
+                        $("#ck2").attr("checked", jsonData.signed);
+                        $("#ck3").attr("checked", jsonData.connected);
+                        $("#newText").val('');
+                        $("#text").html(jsonData.text);
+                        $('#tmcModal').modal('show');
+                    }).error(function (err) {
+                        alert('{% PhraseTag g_default ajaxError %}');
+                    }).complete(function (err) {
+                    });
+        }
+    </script>
+    {% BlockTag2 g_default salesAnalysis \ M \ %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="btn-group">
+                <button value="" type="button"
+                        class="active areaBtn btn btn-default">{% PhraseTag g_default all %}</button>
+                <button value="186" type="button"
+                        class="areaBtn btn btn-default">{% PhraseTag g_default stagepiechart1 %}</button>
+                <button value="187" type="button"
+                        class="areaBtn btn btn-default">{% PhraseTag g_default stagepiechart3 %}</button>
+                <button value="188" type="button"
+                        class="areaBtn btn btn-default">{% PhraseTag g_default stagepiechart2 %}</button>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="text-right">
+                <div class="btn-group">
+                    <button value="sales" type="button"
+                            class="active typeBtn btn btn-default">{% PhraseTag g_default salelead %}</button>
+                    <button value="corp" type="button"
+                            class="typeBtn btn btn-default">{% PhraseTag g_default customer %}</button>
+                    <button value="tmc" type="button"
+                            class="typeBtn btn btn-default">{% PhraseTag g_default tmc %}</button>
+                    <button value="transaction" type="button"
+                            class="typeBtn btn btn-default">{% PhraseTag g_default transaction %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="salesView">
+                <br>
+                <table id="salesmanList"
+                       class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                       cellspacing="0" width="100%">
+                </table>
+            </div>
+            <div id="corpView">
+                <br>
+
+                <div>
+                    <label>{% PhraseTag order startDateTime %}</label><input type="text" class="dateinput"
+                                                                             id="startDate"
+                                                                             name="startDate"
+                                                                             placeholder="" value="">
+                    <label>{% PhraseTag order endDateTime %}</label><input type="text" class="dateinput"
+                                                                           id="endDate" name="endDate"
+                                                                           placeholder="" value="">
+                    <button id="reloadBtn" class="btn btn-primary btn-sm">查看</button>
+                </div>
+                <div class="clearfix"><br><br></div>
+                <table id="accountList"
+                       class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                       cellspacing="0" width="100%">
+                </table>
+            </div>
+            <div id="tmcView">
+                <br>
+                <table id="tmcList"
+                       class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                       cellspacing="0" width="100%">
+                </table>
+                <div class="modal fade" id="tmcModal" tabindex="-1" role="dialog"
+                     aria-labelledby="myModalLabel"
+                     aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">×</button>
+                                <h3>{% PhraseTag calendar detail %}</h3>
+                            </div>
+                            <div class="modal-body">
+                                <input type="hidden" id="bpId" name="bpId">
+
+                                <div class="row box-content">
+                                    <div class="col-md-8 col-xs-8">
+                                        <label for="name1">{% PhraseTag order name %}</label>
+                                        <input type="text" id="name1" class="form-control" name="" placeholder=""
+                                               value=""
+                                               readonly>
+                                    </div>
+                                    <div class="col-md-4 col-xs-4">
+                                        <label for="district">{% PhraseTag g_default district %}</label><br>
+                                        {% FieldSelectTag district model.address1.district.key SA01 district \ %}
+                                    </div>
+                                    <div class="col-md-8 col-xs-8">
+                                        <label for="address">{% PhraseTag g_default address %}</label>
+                                        <input type="text" class="form-control" id="address" name="address"
+                                               placeholder=""
+                                               value="">
+                                    </div>
+                                    <div class="col-md-4 col-xs-4">
+                                        <label for="empResp">{% PhraseTag order empResp %}</label><br>
+                                        {% FieldSelectTag empResp "" SA01 empResp \ %}
+                                    </div>
+                                </div>
+                                <div class="clearfix"><br></div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>
+                                            <input type="checkbox" id="ck1" name="touched" value="true"
+                                                   {% if  model.bpcustomized.boolAttribute1 %}checked{% endif %}> {% PhraseTag g_default touched %}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            <input type="checkbox" id="ck2" name="signed" value="true"
+                                                   {% if  model.bpcustomized.boolAttribute2 %}checked{% endif %}> {% PhraseTag g_default signed %}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>
+                                            <input type="checkbox" id="ck3" name="connected" value="true"
+                                                   {% if  model.bpcustomized.boolAttribute3 %}checked{% endif %}> {% PhraseTag g_default connected %}
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="clearfix"><br></div>
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12 ">
+                                        <label for="text">{% PhraseTag bp newText %}</label>
+                                            <textarea id="newText" name="newText" class="well"
+                                                      style="width:100%"></textarea>
+                                    </div>
+                                </div>
+                                <div class="clearfix"><br></div>
+                                <div class="row">
+                                    <div class="col-md-12 col-xs-12">
+                                        <label for="text">{% PhraseTag bp allText %}</label>
+
+                                        <div id="text" class="well"></div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="clearfix" style="height:2px"></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button id="save"
+                                        class="btn btn-primary btn-sm">{% PhraseTag g_default save %}</button>
+                                <a href="#" class="btn btn-default btn-sm"
+                                   data-dismiss="modal">{% PhraseTag g_default close %}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="transationView">
+                <br>
+
+                <div>
+                    <label>{% PhraseTag order startDateTime %}</label><input type="text" class="dateinput"
+                                                                             id="startDateSaleTxn"
+                                                                             name="startDateSaleTxn"
+                                                                             placeholder="" value="">
+                    <label>{% PhraseTag order endDateTime %}</label><input type="text" class="dateinput"
+                                                                           id="endDateSaleTxn" name="endDateSaleTxn"
+                                                                           placeholder="" value="">
+                    <button id="reloadSaleTxnBtn" class="btn btn-primary btn-sm">查看</button>
+                </div>
+                <div class="clearfix"><br><br></div>
+                <table id="salesmanTxnList"
+                       class="table table-striped table-condensed table-bordered bootstrap-datatable responsive"
+                       cellspacing="0" width="100%">
+                </table>
+            </div>
+        </div>
+    </div>
+    {% EndBlockTag2 %}
+{% endblock %}

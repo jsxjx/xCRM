@@ -1,0 +1,203 @@
+{% extends 'crm/layout/homeLayout.html' %}
+{% block rightWorkArea %}
+    {% load BlockTag %}
+    {% load AuthRequireTag %}
+    {% load FieldSelectTag %}
+    {% load PhraseTag %}
+    {% load staticfiles %}
+    {% load EChartTag %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey; border-radius:4px ">
+                    &nbsp;<span style="font-size: 15px">
+                    <i
+                        class="glyphicon glyphicon-user green"></i> 徐 晓烨&nbsp;&nbsp;
+                    <button class="btn btn-default btn-xs" onclick="javascript:sendMsg('4','徐 晓烨')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i>
+                    </button>
+                </span>
+                    <br>
+                    <span
+                        style="font-size: 10px">&nbsp;&nbsp;13918478249<br>&nbsp;&nbsp;xiaoye.xu@wfinance.com.cn</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 苏 子楠&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('5','苏 子楠')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;2342342<br>&nbsp;asdf2cv@sd9cxv</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 苏 毅&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('6','苏 毅')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 徐 进&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('7','徐 进')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 吴 领&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('8','吴 领')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 仇 斌杰&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('9','仇 斌杰')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 肖 亮飞&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('10','肖 亮飞')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 庞 磅&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('11','庞 磅')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 赵 迪&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('12','赵 迪')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 梁 瑜峻&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('13','梁 瑜峻')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 张 莉&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('14','张 莉')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 景 松&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('15','景 松')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 王 晓峰&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('16','王 晓峰')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 谢 云珍&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('17','谢 云珍')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 张 杰&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('18','张 杰')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 王 二&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('19','王 二')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> la fa&nbsp;<button class="btn btn-default btn-xs"
+                                                                                      onclick="javascript:sendMsg('21','la fa')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> 李 丝丝&nbsp;<button class="btn btn-default btn-xs"
+                                                                                     onclick="javascript:sendMsg('22','李 丝丝')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> a s&nbsp;<button class="btn btn-default btn-xs"
+                                                                                    onclick="javascript:sendMsg('23','a s')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user grey"></i> sun sunny&nbsp;<button class="btn btn-default btn-xs"
+                                                                                          onclick="javascript:sendMsg('24','sun sunny')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+            <div class="box col-md-3 col-xs-6">
+                <div class="" style="border:1px solid grey">&nbsp;<span style="font-size: 15px"><i
+                        class="glyphicon glyphicon-user green"></i> xu amy&nbsp;<button class="btn btn-default btn-xs"
+                                                                                        onclick="javascript:sendMsg('25','xu amy')">
+                    <i class="glyphicon glyphicon-share-alt yellow"></i></button></span><br><span
+                        style="font-size: 10px">&nbsp;null<br>&nbsp;null</span></div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4 col-xs-4 ">
+            <label for="empResp">负责人</label>
+            <select id="receiver" multiple class="form-control" data-rel="chosen">
+                <option value="">&nbsp;</option>
+                <option value="1" selected="selected">徐 晓烨</option>
+                <option value="97">苏 子楠</option>
+                <option value="104">庞 磅</option>
+                <option value="105">赵 迪</option>
+                <option value="107">张 莉</option>
+                <option value="108">景 松</option>
+                <option value="109">王 晓峰</option>
+                <option value="110">谢 云珍</option>
+            </select>
+            {#            <select id="empResp" class="form-control" name="empResp" data-rel="chosen">#}
+            {#                <option value="">&nbsp;</option>#}
+            {#                <option value="1" selected="selected">徐 晓烨</option>#}
+            {#                <option value="97">苏 子楠</option>#}
+            {#                <option value="104">庞 磅</option>#}
+            {#                <option value="105">赵 迪</option>#}
+            {#                <option value="107">张 莉</option>#}
+            {#                <option value="108">景 松</option>#}
+            {#                <option value="109">王 晓峰</option>#}
+            {#                <option value="110">谢 云珍</option>#}
+            {#            </select>#}
+        </div>
+    </div>
+
+    <script>
+        $(function () {
+            $('#empResp').change(function () {
+                console.log("changed")
+            });
+        })
+    </script>
+{% endblock %}
+
