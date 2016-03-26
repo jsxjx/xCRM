@@ -62,7 +62,8 @@ class BPAdmin(admin.ModelAdmin):
         'mobile', 'email', 'valid',
         'deleteFlag')
     search_fields = (
-    'partnerNo', 'firstName', 'middleName', 'lastName', 'name1', 'name2', 'name3', 'name4', 'title', 'mobile', 'email')
+        'partnerNo', 'firstName', 'middleName', 'lastName', 'name1', 'name2', 'name3', 'name4', 'title', 'mobile',
+        'email')
 
 
 admin.site.register(BP, BPAdmin)
@@ -447,14 +448,6 @@ class UploadFilesTempAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UploadFilesTemp, UploadFilesTempAdmin)
-
-
-class SLTAccountMappingAdmin(admin.ModelAdmin):
-    search_fields = ('id', 'bpId', 'sltAccountNumber', 'accountMemo', 'agentBpId', 'sltAgentId', 'agentMemo')
-    list_display = ('id', 'bpId', 'sltAccountNumber', 'accountMemo', 'agentBpId', 'sltAgentId', 'agentMemo')
-
-
-admin.site.register(SLTAccountMapping, SLTAccountMappingAdmin)
 
 
 class OrderFollowUpDefAdmin(admin.ModelAdmin):
