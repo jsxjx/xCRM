@@ -24,7 +24,7 @@ SECRET_KEY = '=t@r)wfd0adi2of@upqx5&i2p81gt0a4*a2hcu8pl7$8fb87%6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost','xiaoyexu-xcrm.daoapp.io']
 
 
 # Application definition
