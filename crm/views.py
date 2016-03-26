@@ -2513,13 +2513,7 @@ def ajax(request):
             result = GetWeeklyReport(interval, option, request)
         elif type == 'myorders':
             bpId = request.GET.get('empResp', None)
-            eIndexName = SystemConfiguration.objects.filter(key='ELASTICSLTINDEXNAME')
-            eServer = SystemConfiguration.objects.filter(key='ELASTICSERVER')
             elasticAvailable = False
-            if eIndexName and eServer:
-                eIndexName = eIndexName[0].value1
-                eServer = eServer[0].value1
-                elasticAvailable = True
             if bpId is None:
                 u = getCurrentUser(request)
                 userBp = u.userbp
@@ -2551,100 +2545,6 @@ def ajax(request):
                     record['status'] = ''
                 record['latestText'] = order.latestText
                 record['id'] = order.id
-                # Get customers account info
-                accounts = []
-                accountMappings = SLTAccountMapping.objects.filter(bpId=order.customer.id, valid=True)
-                for accountMapping in accountMappings:
-                    account = {}
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    account['accountNumber'] = accountNumber
-                    # account['accountNumber'] = accountMapping.sltAccountNumber
-                    account['accountName'] = accountMapping.accountMemo
-                    if elasticAvailable:
-                        statistics = {}
-                        currentDate = datetime.datetime.today()
-                        list = ['year', 'season', 'month', 'week']
-                        dateList = []
-                        d = GetThisYear(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisSeason(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisMonth(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisWeek(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        for i in range(len(list)):
-                            l = list[i]
-                            d = dateList[i]
-                            statistics[l] = {}
-                            dbSum = 0
-                            crSum = 0
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d)
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            statistics[l]['totalSum'] = "¥ {:,}".format(float(sum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, None, 'DB')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            dbSum = sum
-                            statistics[l]['totalDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, None, 'CR')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            crSum = sum
-                            statistics[l]['totalCRSum'] = "¥ {:,}".format(float(crSum))
-                            statistics[l]['totalSum'] = "¥ {:,}".format(float(dbSum - crSum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, True, None)
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalSHCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            statistics[l]['totalSHSum'] = "¥ {:,}".format(float(sum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, True, 'DB')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalSHDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            dbSum = sum
-                            statistics[l]['totalSHDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, True, 'CR')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalSHCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            crSum = sum
-                            statistics[l]['totalSHCRSum'] = "¥ {:,}".format(float(crSum))
-                            statistics[l]['totalSHSum'] = "¥ {:,}".format(float(dbSum - crSum))
-                        account['statistics'] = statistics
-                    accounts.append(account)
-                record['accounts'] = accounts
                 result.append(record)
         elif type == 'tmclist':
             orgId = request.GET.get('orgId', None)
@@ -2656,13 +2556,7 @@ def ajax(request):
                 '187': 'A3',
                 '188': 'A2'
             }
-            eIndexName = SystemConfiguration.objects.filter(key='ELASTICSLTINDEXNAME')
-            eServer = SystemConfiguration.objects.filter(key='ELASTICSERVER')
             elasticAvailable = False
-            if eIndexName and eServer:
-                eIndexName = eIndexName[0].value1
-                eServer = eServer[0].value1
-                elasticAvailable = True
             com = getCurrentCompany()
             tmcs = BP.objects.filter(asBPB__bpA=com, asBPB__relation='TM', valid=True).all()
             if orgId:
@@ -2695,206 +2589,9 @@ def ajax(request):
                     record['signed'] = False
                     record['connected'] = False
                 record['text'] = tmc.latestText
-                accounts = []
-                record['accounts'] = accounts
-                accountMappings = SLTAccountMapping.objects.filter(agentBpId=tmc.id, valid=True)
-                record['accountsCount'] = accountMappings.count()
-                for accountMapping in accountMappings:
-                    account = {}
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    account['accountNumber'] = accountNumber
-                    account['accountName'] = accountMapping.accountMemo
-                    if elasticAvailable:
-                        # Get accounts data related to TMC
-                        statistics = {}
-                        currentDate = datetime.datetime.today()
-                        list = ['year', 'season', 'month', 'week']
-                        dateList = []
-                        d = GetThisYear(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisSeason(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisMonth(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        d = GetThisWeek(currentDate)
-                        d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                        dateList.append(d)
-                        for i in range(len(list)):
-                            l = list[i]
-                            d = dateList[i]
-                            statistics[l] = {}
-                            dbSum = 0
-                            crSum = 0
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d)
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            statistics[l]['totalSum'] = "¥ {:,}".format(float(sum))
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, None, 'DB')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            dbSum = sum
-                            statistics[l]['totalDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                            eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, d,
-                                                                                None, None, 'CR')
-                            eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                            statistics[l]['totalCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                            sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                            if sum is None:
-                                sum = 0
-                            crSum = sum
-                            statistics[l]['totalCRSum'] = "¥ {:,}".format(float(crSum))
-                            statistics[l]['totalSum'] = "¥ {:,}".format(float(dbSum - crSum))
-                        account['statistics'] = statistics
-                    accounts.append(account)
-                record['accounts'] = accounts
                 result.append(record)
         elif type == 'accountlist':
-            eIndexName = SystemConfiguration.objects.filter(key='ELASTICSLTINDEXNAME')
-            eServer = SystemConfiguration.objects.filter(key='ELASTICSERVER')
-            elasticAvailable = False
-            if eIndexName and eServer:
-                eIndexName = eIndexName[0].value1
-                eServer = eServer[0].value1
-                elasticAvailable = True
-            orgId = request.GET.get('orgId', None)
-            sdStr = request.GET.get('sd', None)
-            edStr = request.GET.get('ed', None)
-            # Get customer by sales org
-            accountIdList = []
-            # Get salesman of each sales org
-            orgIdList = []
-            if elasticAvailable:
-                if orgId:
-                    orgIdList.append(orgId)
-                    salesmanRel = BPRelation.objects.filter(bpA__id__in=orgIdList, relation='BL')
-                    for salesman in salesmanRel:
-                        # Get order of each salesman
-                        saleOrders = Order.objects.filter(deleteFlag=False, type='SA01', orderpf__pf='00003',
-                                                          orderpf__bp=salesman.bpB)
-                        for order in saleOrders:
-                            # Get customer bp from order
-                            bp = OrderPFGetSingleBP(order, '00001')
-                            # Append customer bp id to the list
-                            accountIdList.append(str(bp.id))
-                    accountMappings = SLTAccountMapping.objects.filter(bpId__in=accountIdList, valid=True)
-                else:
-                    accountMappings = SLTAccountMapping.objects.filter(valid=True)
-                for accountMapping in accountMappings:
-                    account = {}
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    account['accountNumber'] = accountNumber
-                    # account['accountNumber'] = accountMapping.sltAccountNumber
-                    account['accountName'] = accountMapping.accountMemo
-                    # Get accounts data related to TMC
-                    statistics = {}
-                    currentDate = datetime.datetime.today()
-                    list = ['year', 'season', 'month', 'week']
-                    dateList = []
-                    d = GetThisYear(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisSeason(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisMonth(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisWeek(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    custDate = {}
-                    if sdStr:
-                        startDate = datetime.datetime.strptime(sdStr, '%Y-%m-%d')
-                        custDate['sd'] = startDate.strftime("%Y-%m-%dT00:00:00+08")
-                    if edStr:
-                        endDate = datetime.datetime.strptime(edStr, '%Y-%m-%d')
-                        endDate = endDate + datetime.timedelta(days=1)
-                        custDate['ed'] = endDate.strftime("%Y-%m-%dT00:00:00+08")
-                    dateList.append(custDate)
-                    list.append('custDate')
-                    for i in range(len(list)):
-                        l = list[i]
-                        d = dateList[i]
-                        statistics[l] = {}
-                        dbSum = 0
-                        crSum = 0
-                        if not d:
-                            statistics[l]['totalSum'] = ''
-                            continue
-                        sd = d.get('sd', None)
-                        ed = d.get('ed', None)
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd, ed)
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        statistics[l]['totalSum'] = "¥ {:,}".format(float(sum))
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, False, 'DB')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        dbSum = sum
-                        statistics[l]['totalDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, False, 'CR')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        crSum = sum
-                        statistics[l]['totalCRSum'] = "¥ {:,}".format(float(crSum))
-                        statistics[l]['totalSum'] = "¥ {:,}".format(float(dbSum - crSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, None)
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        statistics[l]['totalSHSum'] = "¥ {:,}".format(float(sum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, 'DB')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        dbSum = sum
-                        statistics[l]['totalSHDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, 'CR')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        crSum = sum
-                        statistics[l]['totalSHCRSum'] = "¥ {:,}".format(float(crSum))
-                        statistics[l]['totalSHSum'] = "¥ {:,}".format(float(dbSum - crSum))
-                    account['statistics'] = statistics
-                    result.append(account)
+            pass
         elif type == 'report':
             # All statistic report goes here
             # Use parameter t - type c - category
@@ -2951,201 +2648,7 @@ def ajax(request):
                 record['newOfMonthCount'] = newOfMonthCount
                 result.append(record)
         elif type == 'salesmantxnlist':
-            eIndexName = SystemConfiguration.objects.filter(key='ELASTICSLTINDEXNAME')
-            eServer = SystemConfiguration.objects.filter(key='ELASTICSERVER')
-            elasticAvailable = False
-            if eIndexName and eServer:
-                eIndexName = eIndexName[0].value1
-                eServer = eServer[0].value1
-                elasticAvailable = True
-            orgId = request.GET.get('orgId', None)
-            sdStr = request.GET.get('sd', None)
-            edStr = request.GET.get('ed', None)
-            result = []
-            orgIdList = []
-            orgId = request.GET.get('orgId', None)
-            if orgId:
-                orgIdList.append(orgId)
-            else:
-                company = getCurrentCompany()
-                # Get sales department, only 1 here and should be existing
-                sdRel = BPRelation.objects.filter(bpA=company, relation='SD')
-                if sdRel:
-                    sdRel = sdRel[0]
-                # Get the sales organization/area by the department
-                orgRel = BPRelation.objects.filter(bpA=sdRel.bpB, relation='BL')
-                for org in orgRel:
-                    orgIdList.append(org.bpB.id)
-            salesmanRel = BPRelation.objects.filter(bpA__id__in=orgIdList, relation='BL')
-            for salesman in salesmanRel:
-                # Get statistics by each salesman
-                record = {}
-                record['name'] = salesman.bpB.displayName()
-                record['id'] = salesman.bpB.id
-                accountIdList = []
-                # Get all sales order by the person
-                saleOrders = Order.objects.filter(deleteFlag=False, type='SA01', orderpf__pf='00003',
-                                                  orderpf__bp=salesman.bpB)
-                for order in saleOrders:
-                    # Get customer bp from order
-                    bp = OrderPFGetSingleBP(order, '00001')
-                    accountIdList.append(str(bp.id))
-                accountMappings = SLTAccountMapping.objects.filter(bpId__in=accountIdList, valid=True)
-                record['accountsCount'] = accountMappings.count()
-                record['accounts'] = []
-                for accountMapping in accountMappings:
-                    account = {}
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    account['accountNumber'] = accountNumber
-                    # account['accountNumber'] = accountMapping.sltAccountNumber
-                    account['accountName'] = accountMapping.accountMemo
-                    # Get accounts data related to TMC
-                    statistics = {}
-                    currentDate = datetime.datetime.today()
-                    list = ['year', 'season', 'month', 'week']
-                    dateList = []
-                    d = GetThisYear(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisSeason(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisMonth(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    d = GetThisWeek(currentDate)
-                    d = d.strftime("%Y-%m-%dT%H:%M:%S+08")
-                    dateList.append({'sd': d})
-                    custDate = {}
-                    if sdStr:
-                        startDate = datetime.datetime.strptime(sdStr, '%Y-%m-%d')
-                        custDate['sd'] = startDate.strftime("%Y-%m-%dT00:00:00+08")
-                    if edStr:
-                        endDate = datetime.datetime.strptime(edStr, '%Y-%m-%d')
-                        endDate = endDate + datetime.timedelta(days=1)
-                        custDate['ed'] = endDate.strftime("%Y-%m-%dT00:00:00+08")
-                    dateList.append(custDate)
-                    list.append('custDate')
-                    for i in range(len(list)):
-                        l = list[i]
-                        d = dateList[i]
-                        statistics[l] = {}
-                        dbSum = 0
-                        crSum = 0
-                        if not d:
-                            statistics[l]['totalSum'] = ''
-                            continue
-                        sd = d.get('sd', None)
-                        ed = d.get('ed', None)
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd, ed)
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        statistics[l]['totalSum_value'] = float(sum)
-                        statistics[l]['totalSum'] = "¥ {:,}".format(float(sum))
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, False, 'DB')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        dbSum = sum
-                        statistics[l]['totalDBSum_value'] = float(dbSum)
-                        statistics[l]['totalDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, False, 'CR')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        crSum = sum
-                        statistics[l]['totalCRSum_value'] = float(crSum)
-                        statistics[l]['totalCRSum'] = "¥ {:,}".format(float(crSum))
-                        statistics[l]['totalSum_value'] = float(dbSum - crSum)
-                        statistics[l]['totalSum'] = "¥ {:,}".format(float(dbSum - crSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, None)
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        statistics[l]['totalSHSum_value'] = float(sum)
-                        statistics[l]['totalSHSum'] = "¥ {:,}".format(float(sum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, 'DB')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHDBCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        dbSum = sum
-                        statistics[l]['totalSHDBSum_value'] = float(dbSum)
-                        statistics[l]['totalSHDBSum'] = "¥ {:,}".format(float(dbSum))
-
-                        eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, sd,
-                                                                            ed, True, 'CR')
-                        eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                        statistics[l]['totalSHCRCount'] = eResult['aggregations']['totalTransactionAmount']['count']
-                        sum = eResult['aggregations']['totalTransactionAmount']['sum']
-                        if sum is None:
-                            sum = 0
-                        crSum = sum
-                        statistics[l]['totalSHCRSum_value'] = float(crSum)
-                        statistics[l]['totalSHCRSum'] = "¥ {:,}".format(float(crSum))
-                        statistics[l]['totalSHSum_value'] = float(dbSum - crSum)
-                        statistics[l]['totalSHSum'] = "¥ {:,}".format(float(dbSum - crSum))
-
-                    account['statistics'] = statistics
-                    record['accounts'].append(account)
-                # Get summary data of all accounts
-                # TotalSum
-                # TotalSHSum
-                totalYearSum = 0
-                totalSeasonSum = 0
-                totalMonthSum = 0
-                totalWeekSum = 0
-                totalCustSum = 0
-                totalSHYearSum = 0
-                totalSHSeasonSum = 0
-                totalSHMonthSum = 0
-                totalSHWeekSum = 0
-                totalSHCustSum = 0
-
-                for account in record['accounts']:
-                    statistics = account['statistics']
-                    # ['year', 'season', 'month', 'week']
-                    totalYearSum += statistics['year']['totalSum_value']
-                    totalSeasonSum += statistics['season']['totalSum_value']
-                    totalMonthSum += statistics['month']['totalSum_value']
-                    totalWeekSum += statistics['week']['totalSum_value']
-                    if statistics['custDate'].get('totalSum_value', False):
-                        totalCustSum += statistics['custDate']['totalSum_value']
-                    totalSHYearSum += statistics['year']['totalSHSum_value']
-                    totalSHSeasonSum += statistics['season']['totalSHSum_value']
-                    totalSHMonthSum += statistics['month']['totalSHSum_value']
-                    totalSHWeekSum += statistics['week']['totalSHSum_value']
-                    if statistics['custDate'].get('totalSHSum_value', False):
-                        totalSHCustSum += statistics['custDate']['totalSHSum_value']
-                record['totalYearSum'] = "¥ {:,}".format(totalYearSum)
-                record['totalSeasonSum'] = "¥ {:,}".format(totalSeasonSum)
-                record['totalMonthSum'] = "¥ {:,}".format(totalMonthSum)
-                record['totalWeekSum'] = "¥ {:,}".format(totalWeekSum)
-                record['totalCustSum'] = "¥ {:,}".format(totalCustSum)
-                record['totalSHYearSum'] = "¥ {:,}".format(totalSHYearSum)
-                record['totalSHSeasonSum'] = "¥ {:,}".format(totalSHSeasonSum)
-                record['totalSHMonthSum'] = "¥ {:,}".format(totalSHMonthSum)
-                record['totalSHWeekSum'] = "¥ {:,}".format(totalSHWeekSum)
-                record['totalSHCustSum'] = "¥ {:,}".format(totalSHCustSum)
-                result.append(record)
+            pass
         elif type == 'documentlist':
             fa = FileAttachment.objects.filter(deleteFlag=False)
             for f in fa:
@@ -3204,39 +2707,7 @@ def GetWeeklyReport(interval, option, request):
     result = []
     date = datetime.datetime.now() - datetime.timedelta(days=int(interval))
     if option == 'sleepaccount':
-        eIndexName = SystemConfiguration.objects.filter(key='ELASTICSLTINDEXNAME')
-        eServer = SystemConfiguration.objects.filter(key='ELASTICSERVER')
-        if eIndexName and eServer:
-            eIndexName = eIndexName[0].value1
-            eServer = eServer[0].value1
-            accountMappings = SLTAccountMapping.objects.filter(valid=True)
-            for accountMapping in accountMappings:
-                # Find out sleeping accounts
-                eBody = GetElasticSearchBodyForTransactionStatistic(accountMapping.sltAccountNumber, date, None)
-                eResult = GetElasticSearchData(eServer, eIndexName, "transaction", eBody)
-                count = eResult['aggregations']['totalTransactionAmount']['count']
-                if int(count) == 0:
-                    record = {}
-                    order = Order.objects.filter(deleteFlag=False, type='SA01', orderpf__pf__key='00001',
-                                                 orderpf__bp__id=accountMapping.bpId)
-                    if order:
-                        order = order[0]
-                    else:
-                        continue
-                    record['id'] = order.id
-                    record['customer'] = order.description
-                    record['channel'] = ''
-                    channel = order.orderpf_set.filter(pf__key='00002')
-                    if channel:
-                        channel = channel[0]
-                        record['channel'] = channel.bp.displayName()
-                    record['salesman'] = OrderPFGetSingleBP(order, '00003').displayName()
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    record['accountNumber'] = accountNumber
-                    updatedAt = str(timezone.localtime(order.updatedAt).strftime("%Y-%m-%d %H:%M:%S"))
-                    record['updatedAt'] = updatedAt
-                    result.append(record)
+        pass
     elif option == 'online':
         orders = Order.objects.filter(type='SA01', updatedAt__gte=date, ordercustomized__stage='00006').order_by(
             "-updatedAt")
@@ -3253,15 +2724,7 @@ def GetWeeklyReport(interval, option, request):
             updatedAt = str(timezone.localtime(order.updatedAt).strftime("%Y-%m-%d %H:%M:%S"))
             record['updatedAt'] = updatedAt
             record['accountNumber'] = ''
-            bp = OrderPFGetSingleBP(order, '00001')
-            if bp:
-                accountMapping = SLTAccountMapping.objects.filter(bpId=bp.id, valid=True)
-                if accountMapping:
-                    accountMapping = accountMapping[0]
-                    accountMapping.sltAccountNumber
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    record['accountNumber'] = accountNumber
+
             result.append(record)
     elif option == 'new':
         orders = Order.objects.filter(type='SA01', createdAt__gte=date).order_by("-updatedAt")
@@ -3279,14 +2742,6 @@ def GetWeeklyReport(interval, option, request):
             record['updatedAt'] = updatedAt
             record['accountNumber'] = ''
             bp = OrderPFGetSingleBP(order, '00001')
-            if bp:
-                accountMapping = SLTAccountMapping.objects.filter(bpId=bp.id, valid=True)
-                if accountMapping:
-                    accountMapping = accountMapping[0]
-                    accountMapping.sltAccountNumber
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    record['accountNumber'] = accountNumber
             result.append(record)
     elif option == 'pending':
         orders = Order.objects.filter(type='SA01', updatedAt__gte=date, status__key='E0005').order_by("-updatedAt")
@@ -3304,14 +2759,6 @@ def GetWeeklyReport(interval, option, request):
             record['updatedAt'] = updatedAt
             record['accountNumber'] = ''
             bp = OrderPFGetSingleBP(order, '00001')
-            if bp:
-                accountMapping = SLTAccountMapping.objects.filter(bpId=bp.id, valid=True)
-                if accountMapping:
-                    accountMapping = accountMapping[0]
-                    accountMapping.sltAccountNumber
-                    accountNumber = accountMapping.sltAccountNumber
-                    accountNumber = accountNumber.replace(accountNumber[3:-3], 'X' * len(accountNumber[3:-3]))
-                    record['accountNumber'] = accountNumber
             result.append(record)
     elif option == 'changes':
         changeHistory = ChangeHistory. \

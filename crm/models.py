@@ -1172,21 +1172,6 @@ class UploadFilesTemp(models.Model):
         verbose_name_plural = u"临时上传文件"
 
 
-# This table stores bp mapping between this system and outside system
-class SLTAccountMapping(models.Model):
-    bpId = models.IntegerField(verbose_name=u"CRM企业（BP）Id")
-    sltAccountNumber = models.CharField(max_length=255, null=False, blank=False, verbose_name=u"山旅通账户（Account Number）")
-    accountMemo = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"账户备注")
-    agentBpId = models.IntegerField(null=True, blank=True, verbose_name=u"CRM代理商（BP）Id")
-    sltAgentId = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"TMC账户（Agent Id）")
-    agentMemo = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"TMC备注")
-    valid = models.BooleanField(default=True, verbose_name=u"有效性")
-
-    class Meta:
-        verbose_name = u"山旅通账户关联表"
-        verbose_name_plural = u"山旅通账户关联表"
-
-
 class OrderFollowUpDef(models.Model):
     orderTypeA = models.ForeignKey('OrderType', related_name="asFollowUpTypeA", verbose_name=u"单据类型A")
     orderTypeB = models.ForeignKey('OrderType', related_name="asFollowUpTypeB", verbose_name=u"单据类型B")
