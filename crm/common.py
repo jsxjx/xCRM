@@ -1633,6 +1633,10 @@ def GetEntityValue(entity, **confData):
                 txt = orderModel.ordertext_set.filter(type=storeKey).order_by('-createdAt')
                 if txt:
                     value = txt[0].content
+        elif storeType == 'MultipleValue':
+            if hasattr(orderModel, 'ordermultiplevaluefield_set'):
+                key = value = [{"id": str(r.id), "charValue1": r.charValue1, "charValue2": r.charValue2} for r in
+                               orderModel.ordermultiplevaluefield_set.filter(field__fieldKey=confData['fieldKey'])]
         else:
             # By default, try column on Order model
             if hasattr(orderModel, fieldColumn):
@@ -1775,6 +1779,33 @@ def SetEntityValue(entity, value, **confData):
                 orderModel.ordercustomized.save()
             else:
                 raise Exception(u"%s not found on ordercustomized" % fieldColumn)
+        elif storeType == 'MultipleValue':
+            # Value is a json object
+            jsonValue = json.loads(value)
+            # Remove records whose id not in current jsonValue
+            ids = []
+            newToCreate = []
+            for value in jsonValue:
+                if str(value['id']).startswith('new'):
+                    newToCreate.append(value)
+                else:
+                    ids.append(value['id'])
+            if ids:
+                for order in orderModel.ordermultiplevaluefield_set.filter(~Q(id__in=ids),
+                                                                           Q(field__fieldKey=confData['fieldKey'])):
+                    order.delete()
+            if not jsonValue:
+                for order in orderModel.ordermultiplevaluefield_set.filter(Q(field__fieldKey=confData['fieldKey'])):
+                    order.delete()
+            # Add new record if any
+            for value in newToCreate:
+                omvf = OrderMultipleValueField()
+                omvf.order = orderModel
+                omvf.field = orderModel.type.orderfielddef_set.filter(fieldKey=confData['fieldKey'])[0]
+                omvf.charValue1 = value.get('charValue1', None)
+                omvf.charValue2 = value.get('charValue2', None)
+                orderModel.ordermultiplevaluefield_set.add(omvf)
+                orderModel.save()
         elif storeType == 'Activity':
             if not hasattr(orderModel, 'activity'):
                 # If no OrderCustomized record, create one
@@ -3246,6 +3277,10 @@ def GetFieldConfigData(businessEntity, configuredField):
     conf['appId'] = configuredField.appId
     conf['editable'] = configuredField.editable
     conf['required'] = configuredField.required
+    conf['multipleValue1PhraseId'] = configuredField.multipleValue1PhraseId
+    conf['multipleValue1Required'] = configuredField.multipleValue1Required
+    conf['multipleValue2PhraseId'] = configuredField.multipleValue2PhraseId
+    conf['multipleValue2Required'] = configuredField.multipleValue2Required
     # Check and call get_<fieldname>_props
     # If no such method, use definition in database table
     callName = 'get_%s_prop' % conf['fieldKey']

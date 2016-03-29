@@ -644,6 +644,27 @@ class OrderCustomized(models.Model):
         verbose_name_plural = u"单据扩展表"
 
 
+# Order multiple field table
+# Similar to OrderPF table below. In case that for each order, multiple values are need for a
+# single field, the value will be stored here as record
+# For most cases, charValue1 is used, if value need to be paired
+# e.g. departure city <-> arrival city, charValue2 could be used
+# Or add new field type later, e.g. IntegerField, BooleanField etc, but this is controlled
+# by business purpose.
+class OrderMultipleValueField(models.Model):
+    order = models.ForeignKey('Order', verbose_name=u"单据")
+    field = models.ForeignKey('OrderFieldDef', verbose_name=u"字段定义")
+    charValue1 = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"值1")
+    charValue2 = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"值2")
+
+    def __unicode__(self):
+        return "%s %s %s %s" % (self.order, self.field, self.charValue1, self.charValue2)
+
+    class Meta:
+        verbose_name = u"单据多值字段表"
+        verbose_name_plural = u"单据多值字段表"
+
+
 # Partner function table
 # This table stores order and it's related BP
 # E.g. A sales order involves customer company, salesman, customer company contacter
@@ -972,6 +993,10 @@ class StdViewLayoutConf(models.Model):
     required = models.BooleanField(default=False, verbose_name=u"是否必须")
     editable = models.BooleanField(default=True, verbose_name=u"可否编辑")
     labelPhraseId = models.CharField(max_length=20, verbose_name=u"标签短语主键")
+    multipleValue1PhraseId = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"多值1标签短语主键")
+    multipleValue1Required = models.BooleanField(default=False, verbose_name=u"使用多值1")
+    multipleValue2PhraseId = models.CharField(max_length=20, null=True, blank=True, verbose_name=u"多值2标签短语主键")
+    multipleValue2Required = models.BooleanField(default=False, verbose_name=u"使用多值2")
     appId = models.CharField(max_length=20, verbose_name=u"短语应用主键")
     locRow = models.IntegerField(verbose_name=u"所在行")
     locCol = models.IntegerField(verbose_name=u"所在列")

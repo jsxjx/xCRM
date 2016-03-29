@@ -532,6 +532,191 @@ class UtilTag(template.Node):
                                        'phrase1': getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
                                        'phrase2': getPhrase(context['request'], 'g_default', 'upload')
                                        }
+                elif confData['fieldType'] == 'MI':
+                    addBtnHtml = ''.join(["""<a href="#" class="%s_AddBtn" """ % (confData['fieldKey'],),
+                                          """><img width="20px" height="20px" src="/salesstatic/img/icon_add.png"></a><br>"""])
+                    valueHtml = ''
+                    # For this type, fieldValue is a list contains dict like
+                    # {'id': '123', 'charValue1':'value 1', 'charValue2':'value 2'}
+                    for v in fieldValue:
+                        charValue1 = v['charValue1']
+                        charValue2 = v['charValue2']
+                        id = v['id']
+                        removeBtn = """&nbsp<a href="#" class="%s_RemoveBtn" item-id="%s"><img width="20px" height="20px" src="/salesstatic/img/icon_minus.png"></a>""" % (
+                            confData['fieldKey'], id
+                        )
+                        if charValue2:
+                            valueHtml += ''.join(
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, ",", charValue2, removeBtn,
+                                 '</div>&nbsp'])
+                        else:
+                            valueHtml += ''.join(
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, removeBtn, '</div>&nbsp'])
+                    values = json.dumps(fieldValue)
+                    values = str(eval(values)).replace("'","\"")
+                    valueHtml += """<input id="%(fieldKey)s" name="%(fieldKey)s" type=hidden value='%(value)s'>""" % {
+                        'fieldKey': confData['fieldKey'], 'value': values}
+                    valueHtml = ''.join(
+                        ["""<div id='%s_ValueDiv' class="well">""" % confData['fieldKey'], valueHtml, "</div>"])
+
+                    subFieldHtml = ""
+                    newItemJsHtml = ""
+                    if confData['multipleValue1Required']:
+                        subFieldHtml += """
+                        <div class="col-md-6 col-xs-6">
+                        <label for="%(fieldKey)s_Value1">%(phraseValue)s</label>
+                        <input type="text" class="form-control" id="%(fieldKey)s_Value1" name="%(fieldKey)s_Value1"
+                               placeholder="" value="">
+                        </div>
+                        """ % {
+                            'fieldKey': confData['fieldKey'],
+                            'phraseValue' : getPhrase(context['request'], phraseAppId, confData['multipleValue1PhraseId'])
+                        }
+                        newItemJsHtml +="""value1 = $("#%(fieldKey)s_Value1").val();""" % {
+                            'fieldKey' : confData['fieldKey']
+                        }
+                    if confData['multipleValue2Required']:
+                        subFieldHtml += """
+                            <div class="col-md-6 col-xs-6">
+                            <label for="%(fieldKey)s_Value2">%(phraseValue)s</label>
+                            <input type="text" class="form-control" id="%(fieldKey)s_Value2" name="%(fieldKey)s_Value2"
+                                   placeholder="" value="">
+                            </div>
+                            """ % {
+                            'fieldKey': confData['fieldKey'],
+                            'phraseValue': getPhrase(context['request'], phraseAppId,
+                                                      confData['multipleValue2PhraseId'])
+                        }
+                        newItemJsHtml += """value2 = $("#%(fieldKey)s_Value2").val();""" % {
+                            'fieldKey': confData['fieldKey']
+                        }
+                    if  confData['multipleValue1Required'] and confData['multipleValue2Required']:
+                        newItemJsHtml += """
+                        newItem = "<div class='btn btn-default btn-sm'>" + value1 + "&nbsp;" + value2;
+                        newId = "new" + ++%(fieldKey)s_i;
+                            newItem += "&nbsp;<a href='#' class='%(fieldKey)s_RemoveBtn' item-id='" + newId + "'>"
+                            newItem += "<img width='20px' height='20px' src='/salesstatic/img/icon_minus.png'>"
+                            newItem += "</a>"
+                            newItem += "</div>&nbsp;"
+                            newJsonObj = {'id': newId, 'charValue1': value1, 'charValue2': value2};
+                        """ % {
+                            'fieldKey': confData['fieldKey']
+                        }
+
+                    else:
+                        if confData['multipleValue1Required']:
+                            newItemJsHtml += """
+                            newItem = "<div class='btn btn-default btn-sm'>" + value1;
+                            newId = "new" + ++%(fieldKey)s_i;
+                            newItem += "&nbsp;<a href='#' class='%(fieldKey)s_RemoveBtn' item-id='" + newId + "'>"
+                            newItem += "<img width='20px' height='20px' src='/salesstatic/img/icon_minus.png'>"
+                            newItem += "</a>"
+                            newItem += "</div>&nbsp;"
+                            newJsonObj = {'id': newId, 'charValue1': value1};
+                            """ % {
+                                'fieldKey': confData['fieldKey']
+                            }
+
+                        if confData['multipleValue2Required']:
+                            newItemJsHtml += """
+                            newItem = "<div class='btn btn-default btn-sm'>" + value2;
+                            newId = "new" + ++%(fieldKey)s_i;
+                            newItem += "&nbsp;<a href='#' class='%(fieldKey)s_RemoveBtn' item-id='" + newId + "'>"
+                            newItem += "<img width='20px' height='20px' src='/salesstatic/img/icon_minus.png'>"
+                            newItem += "</a>"
+                            newItem += "</div>&nbsp;"
+                            newJsonObj = {'id': newId, 'charValue2': value2};
+                            """ % {
+                                'fieldKey': confData['fieldKey']
+                            }
+
+                    scriptHtml = """
+                    <div class="modal fade" id="%(fieldKey)s_Modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                         aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">×</button>
+                                    <h3>%(phrase)s</h3>
+                                </div>
+                                <div class="modal-body">
+                                    <input type="hidden" id="eventId" name="eventId">
+                                    <div class="row">
+                                        %(subField)s
+                                        <div class="clearfix" style="height:2px"></div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#" id="%(fieldKey)s_ConfirmAddBtn" class="btn btn-primary btn-sm">%(phraseAdd)s</a>
+                                    <a href="#" class="btn btn-default btn-sm"
+                                       data-dismiss="modal">%(phraseClose)s</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <script>
+                        $(function () {
+                            $(".%(fieldKey)s_RemoveBtn").on("click", function (e) {
+                            itemId = e.currentTarget.getAttribute("item-id");
+                            oldValue = $("#%(fieldKey)s").val();
+                            jOldValue = eval(oldValue);
+                            for (var i in jOldValue) {
+                                if (jOldValue[i].id == itemId) {
+                                    jOldValue.splice(i, 1);
+                                    $(this).parent().remove();
+                                    newValue = JSON.stringify(jOldValue);
+                                    $("#%(fieldKey)s").val(newValue);
+                                }
+                            }
+                        });
+                        $(".%(fieldKey)s_AddBtn").click(function (e) {
+                            $('#%(fieldKey)s_Modal').modal('show');
+                        });
+                        $("#%(fieldKey)s_ConfirmAddBtn").click(function (e) {
+                            %(newItemJs)s
+                            oldValue = $("#%(fieldKey)s").val();
+                            jValue = eval(oldValue);
+                            jValue.push(newJsonObj);
+                            newValue = JSON.stringify(jValue);
+                            $("#%(fieldKey)s").val(newValue);
+                            $("#%(fieldKey)s_ValueDiv").append(newItem);
+                            $(".%(fieldKey)s_RemoveBtn").on("click", function (e) {
+                                itemId = e.currentTarget.getAttribute("item-id");
+                                oldValue = $("#%(fieldKey)s").val();
+                                jOldValue = eval(oldValue);
+                                for (var i in jOldValue) {
+                                    if (jOldValue[i].id == itemId) {
+                                        jOldValue.splice(i, 1);
+                                        $(this).parent().remove();
+                                        newValue = JSON.stringify(jOldValue);
+                                        $("#%(fieldKey)s").val(newValue);
+                                    }
+                                }
+                            });
+                            $("#%(fieldKey)s_Value1").val('');
+                            $("#%(fieldKey)s_Value2").val('');
+                            $('#%(fieldKey)s_Modal').modal('hide');
+                        });
+                        var %(fieldKey)s_i = 0;
+                        })
+                    </script>
+                    """ % {
+                        'fieldKey': confData['fieldKey'],
+                        'phrase': getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
+                        # 'phraseValue1': 'value1',
+                        # 'phraseValue2': 'value2',
+                        'subField' : subFieldHtml,
+                        'newItemJs' : newItemJsHtml,
+                        'phraseAdd': getPhrase(context['request'], 'g_default', 'add'),
+                        'phraseClose': getPhrase(context['request'], 'g_default', 'close')
+                    }
+                    fieldHtml = '<div class="%s"><label for="%s">%s</label><br>%s%s</div>%s' % (
+                        fieldDivWidth, confData['fieldKey'],
+                        getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
+                        addBtnHtml,
+                        valueHtml,
+                        scriptHtml
+                    )
                 else:
                     fieldHtml = ''
             else:
@@ -606,6 +791,27 @@ class UtilTag(template.Node):
                         'phrase': getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
                         'link': confData.get('fieldTypeLKHtml', 'No link')
                     }
+                elif confData['fieldType'] == 'MI':
+                    valueHtml = ''
+                    # # For this type, fieldValue is a list contains dict like
+                    # # {'charValue1':'value 1', 'charValue2':'value 2'}
+                    for v in fieldValue:
+                        charValue1 = v['charValue1']
+                        charValue2 = v['charValue2']
+                        if charValue2:
+                            valueHtml += ''.join(
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, ",", charValue2,
+                                 '</div>&nbsp'])
+                        else:
+                            valueHtml += ''.join(
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, '</div>&nbsp'])
+                    values = json.dumps(fieldValue)
+                    valueHtml = ''.join(["""<div class="well">""", valueHtml, "</div>"])
+                    fieldHtml = '<div class="%s"><label for="%s">%s</label><br>%s</div>' % (
+                        fieldDivWidth, confData['fieldKey'],
+                        getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
+                        valueHtml
+                    )
                 else:
                     fieldHtml = """<div class="%s"><label for="%s">%s</label><input type="text" class="form-control" name="%s" placeholder="" value="%s" readonly></div>""" % (
                         fieldDivWidth, confData['fieldKey'],

@@ -1,5 +1,3 @@
-from django.contrib import admin
-
 # -*- coding: UTF-8 -*-
 from django.contrib import admin
 from .models import *
@@ -206,10 +204,20 @@ admin.site.register(Order, OrderAdmin)
 
 
 class OrderCustomizedAdmin(admin.ModelAdmin):
-    list_display = ('order', 'travelAmount', 'amount', 'stage', 'goLiveDate', 'file1', 'file2', 'imgFile1', 'imgFile2')
+    list_display = (
+        'order', 'travelAmount', 'amount', 'stage', 'goLiveDate', 'file1', 'file2', 'imgFile1', 'imgFile2',
+        'refundPeriod',
+        'whiteList', 'hotelNeeds', 'carRentNeeds')
 
 
 admin.site.register(OrderCustomized, OrderCustomizedAdmin)
+
+
+class OrderMultipleValueFieldAdmin(admin.ModelAdmin):
+    list_display = ('id', 'order', 'field', 'charValue1', 'charValue2')
+
+
+admin.site.register(OrderMultipleValueField, OrderMultipleValueFieldAdmin)
 
 
 class OrderPFAdmin(admin.ModelAdmin):
@@ -332,7 +340,8 @@ admin.site.register(ViewType, ViewTypeAdmin)
 class StdViewLayoutConfAdmin(admin.ModelAdmin):
     list_display = (
         'field', 'businessRole', 'viewType', 'locRow', 'locCol', 'locWidth', 'locHeight', 'visibility', 'required',
-        'labelPhraseId', 'appId', 'valid')
+        'labelPhraseId', 'multipleValue1PhraseId', 'multipleValue1Required', 'multipleValue2PhraseId',
+        'multipleValue1Required', 'appId', 'valid')
 
 
 admin.site.register(StdViewLayoutConf, StdViewLayoutConfAdmin)
