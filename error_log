@@ -38,3 +38,96 @@ INFO 2016-03-30 12:22:11,146 common.py initialized
 INFO 2016-03-30 12:22:11,146 phrase_cache initialized None
 INFO 2016-03-30 12:22:11,150 view.py initialized
 INFO 2016-03-30 12:22:11,150 BPAppView init
+INFO 2016-03-30 14:53:44,999 common.py initialized
+INFO 2016-03-30 14:53:45,000 phrase_cache initialized None
+INFO 2016-03-30 14:53:45,003 view.py initialized
+INFO 2016-03-30 14:53:45,003 BPAppView init
+INFO 2016-03-30 14:57:48,046 common.py initialized
+INFO 2016-03-30 14:57:48,046 phrase_cache initialized None
+INFO 2016-03-30 15:00:16,171 common.py initialized
+INFO 2016-03-30 15:00:16,171 phrase_cache initialized None
+INFO 2016-03-30 15:01:40,158 common.py initialized
+INFO 2016-03-30 15:01:40,158 phrase_cache initialized None
+INFO 2016-03-30 15:02:03,634 common.py initialized
+INFO 2016-03-30 15:02:03,634 phrase_cache initialized None
+INFO 2016-03-30 15:07:40,758 common.py initialized
+INFO 2016-03-30 15:07:40,758 phrase_cache initialized None
+INFO 2016-03-30 15:10:55,534 common.py initialized
+INFO 2016-03-30 15:10:55,534 phrase_cache initialized None
+INFO 2016-03-30 15:13:04,766 common.py initialized
+INFO 2016-03-30 15:13:04,766 phrase_cache initialized None
+INFO 2016-03-30 15:17:33,811 common.py initialized
+INFO 2016-03-30 15:17:33,811 phrase_cache initialized None
+INFO 2016-03-30 15:22:11,315 common.py initialized
+INFO 2016-03-30 15:22:11,315 phrase_cache initialized None
+INFO 2016-03-30 15:24:33,367 common.py initialized
+INFO 2016-03-30 15:24:33,367 phrase_cache initialized None
+INFO 2016-03-30 15:24:59,629 common.py initialized
+INFO 2016-03-30 15:24:59,630 phrase_cache initialized None
+INFO 2016-03-30 15:25:51,100 common.py initialized
+INFO 2016-03-30 15:25:51,100 phrase_cache initialized None
+INFO 2016-03-30 15:27:19,691 common.py initialized
+INFO 2016-03-30 15:27:19,691 phrase_cache initialized None
+INFO 2016-03-30 15:31:57,470 common.py initialized
+INFO 2016-03-30 15:31:57,470 phrase_cache initialized None
+INFO 2016-03-30 15:32:08,158 common.py initialized
+INFO 2016-03-30 15:32:08,158 phrase_cache initialized None
+INFO 2016-03-30 15:38:05,510 common.py initialized
+INFO 2016-03-30 15:38:05,510 phrase_cache initialized None
+INFO 2016-03-30 15:40:15,461 common.py initialized
+INFO 2016-03-30 15:40:15,461 phrase_cache initialized None
+INFO 2016-03-30 15:40:38,144 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-03-30 15:40:38,167 calling app [home]
+INFO 2016-03-30 15:40:38,167 process home
+INFO 2016-03-30 15:40:38,178 return page: crm/home.html
+INFO 2016-03-30 15:40:38,181 Dispatch app took 0.0240950584412
+INFO 2016-03-30 15:40:38,282 Render response took 0.101052999496
+INFO 2016-03-30 15:42:21,417 common.py initialized
+INFO 2016-03-30 15:42:21,417 phrase_cache initialized None
+INFO 2016-03-30 15:42:27,510 pageApp is home
+INFO 2016-03-30 15:42:27,514 calling app [home]
+INFO 2016-03-30 15:42:27,514 process home
+INFO 2016-03-30 15:42:27,529 return page: crm/home.html
+INFO 2016-03-30 15:42:27,535 Dispatch app took 0.0306420326233
+INFO 2016-03-30 15:42:27,642 Render response took 0.107347011566
+INFO 2016-03-30 15:42:30,779 pageApp is home
+INFO 2016-03-30 15:42:30,782 calling app [home]
+INFO 2016-03-30 15:42:30,783 process home
+INFO 2016-03-30 15:42:30,791 return page: crm/home.html
+INFO 2016-03-30 15:42:30,794 Dispatch app took 0.0218639373779
+INFO 2016-03-30 15:42:30,907 Render response took 0.112767934799
+INFO 2016-03-30 15:42:39,663 pageApp is commonOrder
+INFO 2016-03-30 15:42:39,667 calling app [commonOrder]
+INFO 2016-03-30 15:42:39,667 Initialized
+INFO 2016-03-30 15:42:39,671 return page: crm/commonOrder.html
+INFO 2016-03-30 15:42:39,674 Dispatch app took 0.0169880390167
+INFO 2016-03-30 15:42:39,841 Render response took 0.166957855225
+INFO 2016-03-30 15:42:45,562 pageApp is home
+INFO 2016-03-30 15:42:45,564 calling app [home]
+INFO 2016-03-30 15:42:45,567 process home
+INFO 2016-03-30 15:42:45,578 return page: crm/home.html
+INFO 2016-03-30 15:42:45,580 Dispatch app took 0.0252780914307
+INFO 2016-03-30 15:42:45,664 Render response took 0.0840392112732
+INFO 2016-03-30 15:44:19,165 pageApp is home
+INFO 2016-03-30 15:44:19,168 calling app [home]
+INFO 2016-03-30 15:44:19,169 process home
+INFO 2016-03-30 15:44:19,178 return page: crm/home.html
+INFO 2016-03-30 15:44:19,184 Dispatch app took 0.0236330032349
+INFO 2016-03-30 15:44:19,338 Render response took 0.15324306488
+INFO 2016-03-30 15:44:22,183 pageApp is commonOrder
+INFO 2016-03-30 15:44:22,189 calling app [commonOrder]
+INFO 2016-03-30 15:44:22,189 Initialized
+INFO 2016-03-30 15:44:22,193 return page: crm/commonOrder.html
+INFO 2016-03-30 15:44:22,195 Dispatch app took 0.0178689956665
+INFO 2016-03-30 15:44:22,376 Render response took 0.181105136871
+INFO 2016-03-30 15:45:22,812 calling app [home]
+INFO 2016-03-30 15:45:22,824 process home
+INFO 2016-03-30 15:45:22,879 return page: crm/home.html
+INFO 2016-03-30 15:45:22,884 Dispatch app took 0.0864949226379
+INFO 2016-03-30 15:45:23,024 Render response took 0.139525175095
+INFO 2016-03-30 15:47:52,998 pageApp is home
+INFO 2016-03-30 15:47:53,002 calling app [home]
+INFO 2016-03-30 15:47:53,002 process home
+INFO 2016-03-30 15:47:53,018 return page: crm/home.html
+INFO 2016-03-30 15:47:53,020 Dispatch app took 0.029443025589
+INFO 2016-03-30 15:47:53,153 Render response took 0.131947994232
