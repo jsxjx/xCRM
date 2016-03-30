@@ -552,8 +552,10 @@ class UtilTag(template.Node):
                         else:
                             valueHtml += ''.join(
                                 ["""<div class="btn btn-default btn-sm">""", charValue1, removeBtn, '</div>&nbsp'])
+                    # Change list object to json string
                     values = json.dumps(fieldValue)
-                    values = str(eval(values)).replace("'","\"")
+                    # Then replace ' to ", since javascript recognize double quote
+                    values = values.replace("'", "\"")
                     valueHtml += """<input id="%(fieldKey)s" name="%(fieldKey)s" type=hidden value='%(value)s'>""" % {
                         'fieldKey': confData['fieldKey'], 'value': values}
                     valueHtml = ''.join(
