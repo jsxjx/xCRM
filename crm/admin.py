@@ -205,9 +205,7 @@ admin.site.register(Order, OrderAdmin)
 
 class OrderCustomizedAdmin(admin.ModelAdmin):
     list_display = (
-        'order', 'travelAmount', 'amount', 'stage', 'goLiveDate', 'file1', 'file2', 'imgFile1', 'imgFile2',
-        'refundPeriod',
-        'whiteList', 'hotelNeeds', 'carRentNeeds')
+        'order', 'travelAmount', 'amount', 'stage', 'goLiveDate', 'file1', 'file2', 'imgFile1', 'imgFile2')
 
 
 admin.site.register(OrderCustomized, OrderCustomizedAdmin)

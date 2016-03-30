@@ -22,9 +22,9 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 SECRET_KEY = '=t@r)wfd0adi2of@upqx5&i2p81gt0a4*a2hcu8pl7$8fb87%6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost','xiaoyexu-xcrm.daoapp.io']
+# ALLOWED_HOSTS = ['127.0.0.1', 'localhost','xiaoyexu-xcrm.daoapp.io']
 
 
 # Application definition
