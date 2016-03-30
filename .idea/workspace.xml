@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22d4760a-f026-416b-8eea-9a4ff2437cae" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/db.sqlite3" afterPath="$PROJECT_DIR$/db.sqlite3" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/templatetags/UtilTag.py" afterPath="$PROJECT_DIR$/crm/templatetags/UtilTag.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/admin.py" afterPath="$PROJECT_DIR$/crm/admin.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/common.py" afterPath="$PROJECT_DIR$/crm/common.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/error_log" afterPath="$PROJECT_DIR$/error_log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/crm/models.py" afterPath="$PROJECT_DIR$/crm/models.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="xCRM.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -90,26 +85,26 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="common.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="common.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/crm/common.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="3282" column="75" selection-start-line="3282" selection-start-column="75" selection-end-line="3282" selection-end-column="75" />
+            <state vertical-scroll-proportion="0.43779904">
+              <caret line="702" column="35" selection-start-line="702" selection-start-column="35" selection-end-line="702" selection-end-column="35" />
               <folding>
                 <element signature="e#4471#5269#0" expanded="false" />
                 <element signature="e#9562#10288#0" expanded="false" />
-                <element signature="e#32526#33091#0" expanded="false" />
-                <element signature="e#54575#54707#0" expanded="false" />
-                <element signature="e#60906#60980#0" expanded="false" />
-                <element signature="e#61015#61234#0" expanded="false" />
-                <element signature="e#61278#61470#0" expanded="false" />
-                <element signature="e#146294#148426#0" expanded="false" />
-                <element signature="e#148474#148668#0" expanded="false" />
-                <element signature="e#148854#150339#0" expanded="false" />
-                <element signature="e#150529#152111#0" expanded="false" />
-                <element signature="e#152367#152468#0" expanded="false" />
-                <element signature="e#152501#152929#0" expanded="false" />
-                <element signature="e#152960#153002#0" expanded="false" />
+                <element signature="e#32964#33529#0" expanded="false" />
+                <element signature="e#55013#55145#0" expanded="false" />
+                <element signature="e#61344#61418#0" expanded="false" />
+                <element signature="e#61453#61672#0" expanded="false" />
+                <element signature="e#61716#61908#0" expanded="false" />
+                <element signature="e#147256#149388#0" expanded="false" />
+                <element signature="e#149436#149630#0" expanded="false" />
+                <element signature="e#149816#151301#0" expanded="false" />
+                <element signature="e#151491#153073#0" expanded="false" />
+                <element signature="e#153329#153430#0" expanded="false" />
+                <element signature="e#153463#153891#0" expanded="false" />
+                <element signature="e#153922#153964#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -128,18 +123,18 @@
       <file leaf-file-name="UtilTag.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crm/templatetags/UtilTag.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="1522" column="0" selection-start-line="1522" selection-start-column="0" selection-end-line="1522" selection-end-column="0" />
+            <state vertical-scroll-proportion="-5.148148">
+              <caret line="549" column="84" selection-start-line="549" selection-start-column="84" selection-end-line="549" selection-end-column="84" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="admin.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="admin.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/crm/admin.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.47368422">
-              <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
+            <state vertical-scroll-proportion="-4.0740743">
+              <caret line="466" column="0" selection-start-line="466" selection-start-column="0" selection-end-line="466" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -161,10 +156,10 @@
         <option value="$PROJECT_DIR$/docker-compose.yml" />
         <option value="$PROJECT_DIR$/crm/templates/crm/layout/loginLayout.html" />
         <option value="$PROJECT_DIR$/crm_site/settings.py" />
-        <option value="$PROJECT_DIR$/crm/common.py" />
         <option value="$PROJECT_DIR$/crm/models.py" />
-        <option value="$PROJECT_DIR$/crm/templatetags/UtilTag.py" />
         <option value="$PROJECT_DIR$/crm/admin.py" />
+        <option value="$PROJECT_DIR$/crm/templatetags/UtilTag.py" />
+        <option value="$PROJECT_DIR$/crm/common.py" />
       </list>
     </option>
   </component>
@@ -634,18 +629,18 @@
           <folding>
             <element signature="e#4471#5269#0" expanded="false" />
             <element signature="e#9562#10288#0" expanded="false" />
-            <element signature="e#32526#33091#0" expanded="false" />
-            <element signature="e#54575#54707#0" expanded="false" />
-            <element signature="e#60906#60980#0" expanded="false" />
-            <element signature="e#61015#61234#0" expanded="false" />
-            <element signature="e#61278#61470#0" expanded="false" />
-            <element signature="e#146294#148426#0" expanded="false" />
-            <element signature="e#148474#148668#0" expanded="false" />
-            <element signature="e#148854#150339#0" expanded="false" />
-            <element signature="e#150529#152111#0" expanded="false" />
-            <element signature="e#152367#152468#0" expanded="false" />
-            <element signature="e#152501#152929#0" expanded="false" />
-            <element signature="e#152960#153002#0" expanded="false" />
+            <element signature="e#32964#33529#0" expanded="false" />
+            <element signature="e#55013#55145#0" expanded="false" />
+            <element signature="e#61344#61418#0" expanded="false" />
+            <element signature="e#61453#61672#0" expanded="false" />
+            <element signature="e#61716#61908#0" expanded="false" />
+            <element signature="e#147256#149388#0" expanded="false" />
+            <element signature="e#149436#149630#0" expanded="false" />
+            <element signature="e#149816#151301#0" expanded="false" />
+            <element signature="e#151491#153073#0" expanded="false" />
+            <element signature="e#153329#153430#0" expanded="false" />
+            <element signature="e#153463#153891#0" expanded="false" />
+            <element signature="e#153922#153964#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -729,18 +724,18 @@
           <folding>
             <element signature="e#4471#5269#0" expanded="false" />
             <element signature="e#9562#10288#0" expanded="false" />
-            <element signature="e#32526#33091#0" expanded="false" />
-            <element signature="e#54575#54707#0" expanded="false" />
-            <element signature="e#60906#60980#0" expanded="false" />
-            <element signature="e#61015#61234#0" expanded="false" />
-            <element signature="e#61278#61470#0" expanded="false" />
-            <element signature="e#146294#148426#0" expanded="false" />
-            <element signature="e#148474#148668#0" expanded="false" />
-            <element signature="e#148854#150339#0" expanded="false" />
-            <element signature="e#150529#152111#0" expanded="false" />
-            <element signature="e#152367#152468#0" expanded="false" />
-            <element signature="e#152501#152929#0" expanded="false" />
-            <element signature="e#152960#153002#0" expanded="false" />
+            <element signature="e#32964#33529#0" expanded="false" />
+            <element signature="e#55013#55145#0" expanded="false" />
+            <element signature="e#61344#61418#0" expanded="false" />
+            <element signature="e#61453#61672#0" expanded="false" />
+            <element signature="e#61716#61908#0" expanded="false" />
+            <element signature="e#147256#149388#0" expanded="false" />
+            <element signature="e#149436#149630#0" expanded="false" />
+            <element signature="e#149816#151301#0" expanded="false" />
+            <element signature="e#151491#153073#0" expanded="false" />
+            <element signature="e#153329#153430#0" expanded="false" />
+            <element signature="e#153463#153891#0" expanded="false" />
+            <element signature="e#153922#153964#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -853,29 +848,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crm/common.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="3282" column="75" selection-start-line="3282" selection-start-column="75" selection-end-line="3282" selection-end-column="75" />
-          <folding>
-            <element signature="e#4471#5269#0" expanded="false" />
-            <element signature="e#9562#10288#0" expanded="false" />
-            <element signature="e#32526#33091#0" expanded="false" />
-            <element signature="e#54575#54707#0" expanded="false" />
-            <element signature="e#60906#60980#0" expanded="false" />
-            <element signature="e#61015#61234#0" expanded="false" />
-            <element signature="e#61278#61470#0" expanded="false" />
-            <element signature="e#146294#148426#0" expanded="false" />
-            <element signature="e#148474#148668#0" expanded="false" />
-            <element signature="e#148854#150339#0" expanded="false" />
-            <element signature="e#150529#152111#0" expanded="false" />
-            <element signature="e#152367#152468#0" expanded="false" />
-            <element signature="e#152501#152929#0" expanded="false" />
-            <element signature="e#152960#153002#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/crm/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-7.185185">
@@ -884,19 +856,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crm/templatetags/UtilTag.py">
+    <entry file="file://$PROJECT_DIR$/crm/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="1522" column="0" selection-start-line="1522" selection-start-column="0" selection-end-line="1522" selection-end-column="0" />
+        <state vertical-scroll-proportion="-4.0740743">
+          <caret line="466" column="0" selection-start-line="466" selection-start-column="0" selection-end-line="466" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/crm/admin.py">
+    <entry file="file://$PROJECT_DIR$/crm/templatetags/UtilTag.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.47368422">
-          <caret line="470" column="0" selection-start-line="470" selection-start-column="0" selection-end-line="470" selection-end-column="0" />
+        <state vertical-scroll-proportion="-5.148148">
+          <caret line="549" column="84" selection-start-line="549" selection-start-column="84" selection-end-line="549" selection-end-column="84" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/crm/common.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.43779904">
+          <caret line="702" column="35" selection-start-line="702" selection-start-column="35" selection-end-line="702" selection-end-column="35" />
+          <folding>
+            <element signature="e#4471#5269#0" expanded="false" />
+            <element signature="e#9562#10288#0" expanded="false" />
+            <element signature="e#32964#33529#0" expanded="false" />
+            <element signature="e#55013#55145#0" expanded="false" />
+            <element signature="e#61344#61418#0" expanded="false" />
+            <element signature="e#61453#61672#0" expanded="false" />
+            <element signature="e#61716#61908#0" expanded="false" />
+            <element signature="e#147256#149388#0" expanded="false" />
+            <element signature="e#149436#149630#0" expanded="false" />
+            <element signature="e#149816#151301#0" expanded="false" />
+            <element signature="e#151491#153073#0" expanded="false" />
+            <element signature="e#153329#153430#0" expanded="false" />
+            <element signature="e#153463#153891#0" expanded="false" />
+            <element signature="e#153922#153964#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>

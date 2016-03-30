@@ -547,7 +547,7 @@ class UtilTag(template.Node):
                         )
                         if charValue2:
                             valueHtml += ''.join(
-                                ["""<div class="btn btn-default btn-sm">""", charValue1, ",", charValue2, removeBtn,
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, "&nbsp;", charValue2, removeBtn,
                                  '</div>&nbsp'])
                         else:
                             valueHtml += ''.join(
@@ -710,7 +710,7 @@ class UtilTag(template.Node):
                         'phraseAdd': getPhrase(context['request'], 'g_default', 'add'),
                         'phraseClose': getPhrase(context['request'], 'g_default', 'close')
                     }
-                    fieldHtml = '<div class="%s"><label for="%s">%s</label><br>%s%s</div>%s' % (
+                    fieldHtml = '<div class="%s"><label for="%s">%s</label>&nbsp;%s%s</div>%s' % (
                         fieldDivWidth, confData['fieldKey'],
                         getPhrase(context['request'], phraseAppId, confData['labelPhraseId']),
                         addBtnHtml,
@@ -800,7 +800,7 @@ class UtilTag(template.Node):
                         charValue2 = v['charValue2']
                         if charValue2:
                             valueHtml += ''.join(
-                                ["""<div class="btn btn-default btn-sm">""", charValue1, ",", charValue2,
+                                ["""<div class="btn btn-default btn-sm">""", charValue1, "&nbsp;", charValue2,
                                  '</div>&nbsp'])
                         else:
                             valueHtml += ''.join(

@@ -697,8 +697,14 @@ class CommonOrderAppView(ModelStdView):
                     # Call get method
                     try:
                         oldKeyValue, oldDisplayValue = GetFieldValue(be, **confData)
+                        if confData['fieldType'] == 'MI':
+                            oldDisplayValue = ','.join(
+                                ['%s %s' % (v['charValue1'], v['charValue2']) for v in oldDisplayValue])
                         SetFieldValue(be, fieldValue, **confData)
                         newKeyValue, newDisplayValue = GetFieldValue(be, **confData)
+                        if confData['fieldType'] == 'MI':
+                            newDisplayValue = ','.join(
+                                ['%s %s' % (v['charValue1'], v['charValue2']) for v in newDisplayValue])
                     except Exception, e:
                         coContext.fieldErrors[confData['fieldKey']] = "%s %s" % (fieldname, e.message)
                     if str(oldKeyValue) != str(newKeyValue) or str(oldDisplayValue) != str(newDisplayValue):
@@ -2520,7 +2526,7 @@ class SaleOrderBE(OrderBE):
     def get_text(self):
         logText = ''
         if self.pageStatus != 'edit':
-            for l in self.texts.order_by('-createdAt'):
+            for l in self.texts.filter(type__key='T001').order_by('-createdAt'):
                 # Build log
                 t = '%s %s %s<br>----------<br>%s' % (
                     l.type.description, l.createdBy.displayName(),
@@ -2536,6 +2542,18 @@ class SaleOrderBE(OrderBE):
             self.newText.type = TextType.objects.get(pk='T001')
             self.newText.content = text
             self.newText.createdBy = self.getCurrentUser()
+
+    def get_acText(self):
+        logText = ''
+        if self.pageStatus != 'edit':
+            for l in self.texts.filter(type__key='T003').order_by('-createdAt'):
+                # Build log
+                t = '%s %s %s<br>----------<br>%s' % (
+                    l.type.description, l.createdBy.displayName(),
+                    timezone.localtime(l.createdAt).strftime('%Y-%m-%d %H:%M:%S'), l.content)
+
+                logText = '%s%s<br><br>' % (logText, t)
+        return (None, logText)
 
     # Addon field, only get
     def get_district(self):
