@@ -131,3 +131,29 @@ INFO 2016-03-30 15:47:53,002 process home
 INFO 2016-03-30 15:47:53,018 return page: crm/home.html
 INFO 2016-03-30 15:47:53,020 Dispatch app took 0.029443025589
 INFO 2016-03-30 15:47:53,153 Render response took 0.131947994232
+INFO 2016-03-30 17:21:17,840 common.py initialized
+INFO 2016-03-30 17:21:17,840 phrase_cache initialized None
+INFO 2016-03-30 17:23:12,162 common.py initialized
+INFO 2016-03-30 17:23:12,162 phrase_cache initialized None
+INFO 2016-03-30 17:23:47,754 common.py initialized
+INFO 2016-03-30 17:23:47,754 phrase_cache initialized None
+INFO 2016-03-30 17:23:47,757 view.py initialized
+INFO 2016-03-30 17:23:47,757 BPAppView init
+INFO 2016-03-30 17:24:37,174 common.py initialized
+INFO 2016-03-30 17:24:37,175 phrase_cache initialized None
+INFO 2016-03-30 17:24:54,684 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-03-30 17:24:54,700 calling app [home]
+INFO 2016-03-30 17:24:54,700 process home
+INFO 2016-03-30 17:24:54,709 return page: crm/home.html
+INFO 2016-03-30 17:24:54,712 Dispatch app took 0.0176010131836
+INFO 2016-03-30 17:24:54,787 Render response took 0.0744471549988
+INFO 2016-03-30 17:25:05,656 pageApp is message
+INFO 2016-03-30 17:25:05,657 calling app [message]
+INFO 2016-03-30 17:25:05,658 calling app [message]
+INFO 2016-03-30 17:25:05,664 Dispatch app took 0.0117020606995
+INFO 2016-03-30 17:25:05,756 Render response took 0.0917019844055
+INFO 2016-03-30 17:25:08,790 pageApp is message
+INFO 2016-03-30 17:25:08,791 calling app [message]
+INFO 2016-03-30 17:25:08,792 calling app [message]
+INFO 2016-03-30 17:25:08,797 Dispatch app took 0.0103969573975
+INFO 2016-03-30 17:25:08,901 Render response took 0.104650020599
