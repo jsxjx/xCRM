@@ -1367,7 +1367,7 @@ def getCurrentCompany():
         return None
 
 
-def verifyUser(username, password):
+def verifyUser(username, password, encryptedPwd=None):
     """
     Verify user from database table and return UserProfile object
     Error code
@@ -1375,7 +1375,8 @@ def verifyUser(username, password):
     e02 Too many failures, locked
     """
     error = ''
-    encryptedPwd = hashlib.sha1(password).hexdigest()
+    if not encryptedPwd:
+        encryptedPwd = hashlib.sha1(password).hexdigest()
     # Check unencrypted password
     userLogin = UserLogin.objects.filter(username__exact=username, password=password, passwordEncrypted=False)
     if userLogin:

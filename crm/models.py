@@ -1082,10 +1082,10 @@ class ChangeHistory(models.Model):
     # 'Order', 'BP'
     type = models.CharField(max_length=50, verbose_name=u"实体类型")
     objectField = models.CharField(max_length=50, verbose_name=u"实体字段")
-    oldValue = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"字段旧值")
-    oldKeyValue = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"字段旧键值")
-    newValue = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"字段新值")
-    newKeyValue = models.CharField(max_length=255, null=True, blank=True, verbose_name=u"字段新键值")
+    oldValue = models.TextField(null=True, blank=True, verbose_name=u"字段旧值")
+    oldKeyValue = models.TextField(null=True, blank=True, verbose_name=u"字段旧键值")
+    newValue = models.TextField(null=True, blank=True, verbose_name=u"字段新值")
+    newKeyValue = models.TextField(null=True, blank=True, verbose_name=u"字段新键值")
     # UpdatedBy should be a BP, here store the id, but not required as Foreign key
     updatedBy = models.CharField(max_length=255, verbose_name=u"更新者")
     updatedAt = models.DateTimeField(auto_now=False, verbose_name=u"更新于")

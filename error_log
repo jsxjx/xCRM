@@ -157,3 +157,50 @@ INFO 2016-03-30 17:25:08,791 calling app [message]
 INFO 2016-03-30 17:25:08,792 calling app [message]
 INFO 2016-03-30 17:25:08,797 Dispatch app took 0.0103969573975
 INFO 2016-03-30 17:25:08,901 Render response took 0.104650020599
+INFO 2016-04-01 14:47:59,755 common.py initialized
+INFO 2016-04-01 14:47:59,755 phrase_cache initialized None
+INFO 2016-04-01 14:47:59,756 view.py initialized
+INFO 2016-04-01 14:47:59,757 BPAppView init
+INFO 2016-04-01 14:48:37,926 common.py initialized
+INFO 2016-04-01 14:48:37,926 phrase_cache initialized None
+INFO 2016-04-01 14:48:37,930 view.py initialized
+INFO 2016-04-01 14:48:37,930 BPAppView init
+INFO 2016-04-01 14:49:52,523 common.py initialized
+INFO 2016-04-01 14:49:52,523 phrase_cache initialized None
+INFO 2016-04-01 14:49:52,526 view.py initialized
+INFO 2016-04-01 14:49:52,526 BPAppView init
+INFO 2016-04-01 14:50:02,509 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-04-01 14:50:02,526 calling app [home]
+INFO 2016-04-01 14:50:02,526 process home
+INFO 2016-04-01 14:50:02,537 return page: crm/home.html
+INFO 2016-04-01 14:50:02,539 Dispatch app took 0.0179600715637
+INFO 2016-04-01 14:50:02,625 Render response took 0.0858659744263
+INFO 2016-04-01 14:52:26,732 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-04-01 14:52:26,753 calling app [home]
+INFO 2016-04-01 14:52:26,753 process home
+INFO 2016-04-01 14:52:26,771 return page: crm/home.html
+INFO 2016-04-01 14:52:26,778 Dispatch app took 0.031907081604
+INFO 2016-04-01 14:52:26,876 Render response took 0.098268032074
+INFO 2016-04-01 14:52:34,933 calling app [home]
+INFO 2016-04-01 14:52:34,933 process home
+INFO 2016-04-01 14:52:34,942 return page: crm/home.html
+INFO 2016-04-01 14:52:34,945 Dispatch app took 0.0183811187744
+INFO 2016-04-01 14:52:35,016 Render response took 0.0707421302795
+INFO 2016-04-01 14:52:45,514 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-04-01 14:52:45,537 calling app [home]
+INFO 2016-04-01 14:52:45,537 process home
+INFO 2016-04-01 14:52:45,543 return page: crm/home.html
+INFO 2016-04-01 14:52:45,545 Dispatch app took 0.0156729221344
+INFO 2016-04-01 14:52:45,629 Render response took 0.0842111110687
+INFO 2016-04-01 14:52:52,507 pageApp is home
+INFO 2016-04-01 14:52:52,509 calling app [home]
+INFO 2016-04-01 14:52:52,509 process home
+INFO 2016-04-01 14:52:52,516 return page: crm/home.html
+INFO 2016-04-01 14:52:52,522 Dispatch app took 0.0200419425964
+INFO 2016-04-01 14:52:52,596 Render response took 0.0735669136047
+INFO 2016-04-01 14:54:49,205 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-04-01 14:54:49,219 calling app [home]
+INFO 2016-04-01 14:54:49,219 process home
+INFO 2016-04-01 14:54:49,227 return page: crm/home.html
+INFO 2016-04-01 14:54:49,229 Dispatch app took 0.0156619548798
+INFO 2016-04-01 14:54:49,299 Render response took 0.0699968338013

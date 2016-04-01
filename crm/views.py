@@ -1637,6 +1637,7 @@ modelApps = {
 class UserLoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
+    remember = forms.BooleanField(required=False)
 
 
 # Handling login request
@@ -1646,6 +1647,7 @@ def login(request):
         if uf.is_valid():
             username = uf.cleaned_data['username']
             password = uf.cleaned_data['password']
+            remember = uf.cleaned_data['remember']
             # Verify user
             (up, error) = verifyUser(username, password)
             # If system is in maintanence, show error
@@ -1685,12 +1687,26 @@ def login(request):
                     context = RequestContext(request, {
                         'roles': roles
                     })
-                    return HttpResponse(template.render(context))
+                    response = HttpResponse(template.render(context))
+                    if remember:
+                        dt = datetime.datetime.now() + datetime.timedelta(days=31)
+                        encryptedPwd = hashlib.sha1(password).hexdigest()
+                        response.set_cookie('username', username, expires=dt)
+                        response.set_cookie('password', encryptedPwd, expires=dt)
+                        response.set_cookie('remember', remember, expires=dt)
+                    return response
                 elif roles.count() == 1:
                     # Only 1 role assigned, show home page
                     up['loginRole'] = roles[0].key
                     up['loginRoleName'] = roles[0].description
-                    return HttpResponseRedirect('home')
+                    response = HttpResponseRedirect('home')
+                    if remember:
+                        dt = datetime.datetime.now() + datetime.timedelta(days=31)
+                        encryptedPwd = hashlib.sha1(password).hexdigest()
+                        response.set_cookie('username', username, expires=dt)
+                        response.set_cookie('password', encryptedPwd, expires=dt)
+                        response.set_cookie('remember', remember, expires=dt)
+                    return response
                 else:
                     # No role assigned to user
                     error = 'noRole'
@@ -1718,7 +1734,11 @@ def logout(request):
     # Removing user session
     for k, v in request.session.items():
         del request.session[k]
-    return HttpResponseRedirect('index')
+    response = HttpResponseRedirect('index')
+    response.delete_cookie('username', path='/')
+    response.delete_cookie('password', path='/')
+    response.delete_cookie('remember', path='/')
+    return response
 
 
 # Home page, all request goes here
@@ -1778,7 +1798,58 @@ def home(request):
     request.session['lan'] = context['lan'] = lan
     # Check is user login, otherwise goes to login page
     if not checkIsUserLogin(request):
-        return THR(request, 'crm/login.html', context)
+        # Check cookie for username password
+        username = request.COOKIES.get('username', None)
+        password = request.COOKIES.get('password', None)
+        remember = request.COOKIES.get('remember', False)
+        if remember and username and password:
+            (up, error) = verifyUser(username, None, password)
+            if up:
+                # User is valid, check user role
+                request.session['up'] = up
+                navLoc = ['home']
+                request.session['navLoc'] = navLoc
+                userAuth = up.get('userAuth', None)
+                if not userAuth:
+                    # No role authorization or profile assigned to user
+                    up['loginRole'] = ''
+                    error = 'noRole'
+                    template = loader.get_template('crm/login.html')
+                    errorDesc = getPhrase(request, 'g_default', 'err.' + error)
+                    context = RequestContext(request, {
+                        'errorDesc': errorDesc
+                    })
+                    return HttpResponse(template.render(context))
+                roles = UserRoleType.objects.filter(key__in=up['userAuth']['roles'])
+                log.info('roles:%s' % roles)
+                up['loginRole'] = ''
+                if roles.count() > 1:
+                    # Multiple role assigned, show role selection screen
+                    template = loader.get_template('crm/roleSelect.html')
+                    context = RequestContext(request, {
+                        'roles': roles
+                    })
+                    response = HttpResponse(template.render(context))
+                    return response
+                elif roles.count() == 1:
+                    # Only 1 role assigned, show home page
+                    up['loginRole'] = roles[0].key
+                    up['loginRoleName'] = roles[0].description
+                    response = HttpResponseRedirect('home')
+                    return response
+                else:
+                    # No role assigned to user
+                    error = 'noRole'
+                    template = loader.get_template('crm/login.html')
+                    errorDesc = getPhrase(request, 'g_default', 'err.' + error)
+                    context = RequestContext(request, {
+                        'errorDesc': errorDesc
+                    })
+                    return HttpResponse(template.render(context))
+            else:
+                return HttpResponseRedirect('index')
+        else:
+            return THR(request, 'crm/login.html', context)
     # Check is user role selected, otherwise goes to login page
     if not checkUserRole(request):
         return THR(request, 'crm/login.html', {'errorDesc': errorDesc})
@@ -2666,26 +2737,28 @@ def ajax(request):
             ul = getCurrentUser(request)
             ul.pulseAt = datetime.datetime.now()
             ul.save()
-            result = SiteMessage.objects.filter(receiver=ul, receiverReadFlag=False, receiverDeleteFlag=False).order_by("-sentAt").count()
+            result = SiteMessage.objects.filter(receiver=ul, receiverReadFlag=False, receiverDeleteFlag=False).order_by(
+                "-sentAt").count()
         elif type == 'userlist':
             result = []
             com = getCurrentCompany()
             users = [ul for ul in UserLogin.objects.all()]
             for user in users:
-                record={}
-                record['userId']=user.id
-                record['userBpName']=user.userbp.displayName()
+                record = {}
+                record['userId'] = user.id
+                record['userBpName'] = user.userbp.displayName()
                 record['isAlive'] = user.isAlive()
                 record['title'] = user.userbp.title
                 record['mobile'] = user.userbp.mobile
                 record['email'] = user.userbp.email
                 result.append(record)
-            # result.sort(lambda x, y: cmp(x['userBpName'], y['userBpName']))
+                # result.sort(lambda x, y: cmp(x['userBpName'], y['userBpName']))
         elif type == 'myworklist':
             result = []
             up = request.session.get('up', None)
             if up['loginRole'] == 'OPERATION_ROLE':
-                orders = Order.objects.filter(Q(type='CK01'),Q(deleteFlag=False),~Q(ordercustomized__checkResult='E1003'))
+                orders = Order.objects.filter(Q(type='CK01'), Q(deleteFlag=False),
+                                              ~Q(ordercustomized__checkResult='E1003'))
                 for order in orders:
                     record = {}
                     record['id'] = order.id
@@ -2696,8 +2769,6 @@ def ajax(request):
                     else:
                         record['empResp'] = ''
                     result.append(record)
-
-
 
         resp = json.dumps(result)
         return HttpResponse(resp)
@@ -2890,6 +2961,7 @@ def test(request, context):
     # print sopt
     # context['stackOpt'] = json.dumps(sopt)
     return 'crm/test.html'
+
 
 def message(request, context):
     com = getCurrentCompany()
