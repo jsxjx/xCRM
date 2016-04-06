@@ -3187,10 +3187,11 @@ def buildDateTimeInputBox(fieldname, placeholder, currentValue):
 
 def GetFieldOptByType(fieldType, valueType, context):
     opts = {}
-    possibleOpts = []
     if not valueType or valueType == 'String' or valueType == '':
         if fieldType == 'IN':
             possibleOpts = ['eq', 'ne', 'cs', 'nc']
+        elif fieldType == 'MI':
+            possibleOpts = ['cs', 'nc']
         else:
             possibleOpts = ['eq', 'ne']
     elif valueType == 'Number' or valueType == 'Date':
