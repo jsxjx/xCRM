@@ -548,6 +548,36 @@ class CommonOrderAppView(ModelStdView):
                                         continue
                                     buildQobject(qor, newKey, opt, low, high, Q.OR)
                                 q.add(qor, Q.AND)
+                        elif f[0].storeType == 'MultipleValue':
+                            newKey = 'ordermultiplevaluefield__field__fieldKey'
+                            charValue1 = 'ordermultiplevaluefield__charValue1'
+                            charValue2 = 'ordermultiplevaluefield__charValue2'
+                            if len(v) == 1:
+                                opt = v[0].opt
+                                low = v[0].low
+                                high = v[0].high
+                                if not low and not high:
+                                    continue
+                                innerQ = Q()
+                                buildQobject(innerQ, newKey, 'eq', k, None, Q.AND)
+                                innerQor = Q()
+                                buildQobject(innerQor, charValue1, opt, low, high, Q.AND)
+                                buildQobject(innerQor, charValue2, opt, low, high, Q.OR)
+                                innerQ.add(innerQor, Q.AND)
+                            else:
+                                qor = Q()
+                                buildQobject(qor, newKey, 'eq', k, None, Q.AND)
+                                for c in v:
+                                    opt = c.opt
+                                    low = c.low
+                                    high = c.high
+                                    if not low and not high:
+                                        continue
+                                    inner_qor = Q()
+                                    buildQobject(inner_qor, charValue1, opt, low, high, Q.OR)
+                                    buildQobject(inner_qor, charValue2, opt, low, high, Q.OR)
+                                    qor.add(inner_qor, Q.AND)
+                            orders = orders.filter(qor)
             if q:
                 # modelIds = Order.objects.filter(q).values('id')
                 modelIds = orders.filter(q).values('id')
