@@ -1847,7 +1847,7 @@ def home(request):
                     })
                     return HttpResponse(template.render(context))
             else:
-                return HttpResponseRedirect('index')
+                return THR(request, 'sales/login.html', context)
         else:
             return THR(request, 'crm/login.html', context)
     # Check is user role selected, otherwise goes to login page
