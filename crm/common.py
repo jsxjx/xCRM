@@ -1042,8 +1042,6 @@ class CommonBpAppView(ModelStdView):
                                 opt = v[0].opt
                                 low = v[0].low
                                 high = v[0].high
-                                if not low and not high:
-                                    continue
                                 buildQobject(q, newKey, opt, low, high, Q.AND)
                             else:
                                 qor = Q()
@@ -1051,8 +1049,6 @@ class CommonBpAppView(ModelStdView):
                                     opt = c.opt
                                     low = c.low
                                     high = c.high
-                                    if not low and not high:
-                                        continue
                                     buildQobject(qor, newKey, opt, low, high, Q.OR)
                                 q.add(qor, Q.AND)
             if q:
@@ -3260,7 +3256,8 @@ def getCommonOrderSearchFields(request, co):
 
 
 def buildQobject(q, fieldname, opt, low, high, ao):
-    if not low and not high:
+    # Ignore eq if low/high value is not given
+    if opt == 'eq' and not low and not high:
         return
     conKey = fieldname
     # Special filter for status
@@ -3279,7 +3276,14 @@ def buildQobject(q, fieldname, opt, low, high, ao):
     elif opt == 'eq':
         q.add(Q(**{conKey: low}), ao)
     elif opt == 'ne':
-        q.add(~Q(**{conKey: low}), ao)
+        if low:
+            q.add(~Q(**{conKey: low}), ao)
+        else:
+            # For value '', check whether it's not None and not ''
+            innerQ = Q()
+            innerQ.add(~Q(**{conKey: None}), Q.AND)
+            innerQ.add(~Q(**{conKey: low}), Q.AND)
+            q.add(innerQ, ao)
     elif opt == 'lt':
         conKey = ''.join([fieldname, '__lt'])
         q.add(Q(**{conKey: low}), ao)
@@ -3425,7 +3429,7 @@ def GetFieldValueAndOptions(businessEntity, **configuredData):
     fieldKey = configuredData.get('fieldKey', None)
     storeType = configuredData.get('storeType', None)
     storeKey = configuredData.get('storeKey', None)
-    fieldOptions = {}
+    fieldOptions = []
     fieldValue, displayValue = GetFieldValue(businessEntity, **configuredData)
     if fieldType == 'SE' or fieldType == 'MS':
         if hasattr(businessEntity, 'get_%s_options' % fieldKey):
@@ -3435,7 +3439,7 @@ def GetFieldValueAndOptions(businessEntity, **configuredData):
             if hasattr(businessEntity, 'orderModel'):
                 # Get options from OrderExtSelectionFieldType by storeKey
                 for option in businessEntity.orderModel.type.orderextselectionfieldtype_set.filter(fieldKey=storeKey):
-                    fieldOptions[option.key] = option.description
+                    fieldOptions.append((option.key, option.description))
     return fieldValue, displayValue, fieldOptions
 
 

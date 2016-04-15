@@ -1077,7 +1077,7 @@ class UtilTag(template.Node):
                             # Get options from OrderExtSelectionFieldType by storeKey
                             fopts = [{'k': option.key, 'v': option.description} for option in
                                      OrderExtSelectionFieldType.objects.filter(orderType=vEntityType,
-                                                                               fieldKey=storeKey)]
+                                                                               fieldKey=storeKey).order_by("sortOrder")]
                             fopts.insert(0, {'k': '', 'v': ''})
                             html3 = buildSelectionOption(fl, fopts, criteria.low, None)
                     else:
