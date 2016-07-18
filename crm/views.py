@@ -1847,7 +1847,7 @@ def home(request):
                     })
                     return HttpResponse(template.render(context))
             else:
-                return THR(request, 'sales/login.html', context)
+                return THR(request, 'crm/login.html', context)
         else:
             return THR(request, 'crm/login.html', context)
     # Check is user role selected, otherwise goes to login page
@@ -2968,3 +2968,14 @@ def message(request, context):
     users = [ul for ul in UserLogin.objects.all()]
     context['users'] = users
     return 'crm/message.html'
+
+
+# Mobile API
+# @csrf_exempt
+# def login(request):
+#     result = {'code': 0,
+#               'desc': u'success',
+#               'data': {'userId': '%s' % '123123'}
+#               }
+#     resultStr = json.dumps(result)
+#     return HttpResponse(resultStr)

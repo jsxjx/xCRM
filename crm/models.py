@@ -1249,3 +1249,5 @@ class SiteMessage(models.Model):
     class Meta:
         verbose_name = u"用户消息表"
         verbose_name_plural = u"用户消息表"
+
+

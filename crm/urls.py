@@ -10,5 +10,5 @@ urlpatterns=[
    url(r'^ajax$', views.ajax, name='ajax'),
    url(r'^tile$', views.tile, name='tile'),
    url(r'^xlsoutput$', views.xlsoutput, name='xlsoutput'),
-   url(r'^.*$', views.home, name='home')
+   url(r'^.*$', views.home, name='home'),
 ]

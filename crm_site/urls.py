@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^crmadmin/', include(admin.site.urls)),
     url(r'^crm/', include('crm.urls')),
+    url(r'^mobile/', include('mobile.urls')),
 ]
