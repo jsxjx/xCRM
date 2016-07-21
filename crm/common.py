@@ -1361,6 +1361,20 @@ def getCurrentUserBp(request):
     return userLogin.userbp
 
 
+def getPhraseLan(lan, appid, phraseid, default=None):
+    p = SitePhrase.objects.filter(app__appId=appid, phraseId=phraseid, phraseLan__key=lan)
+    if p and p[0]:
+        if p[0].content:
+            return p[0].content
+        else:
+            return p[0].bigContent
+    else:
+        if default:
+            return default
+        else:
+            return "[%s %s %s]" % (appid, phraseid, lan)
+
+
 def getPhrase(request, appid, phraseid, default=None):
     """The function return the phrase text against language in session"""
     startTime = time.time()

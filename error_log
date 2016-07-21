@@ -240,3 +240,17 @@ INFO 2016-07-18 15:56:58,789 common.py initialized
 INFO 2016-07-18 15:56:58,790 phrase_cache initialized None
 INFO 2016-07-18 15:56:58,790 view.py initialized
 INFO 2016-07-18 15:56:58,790 BPAppView init
+INFO 2016-07-18 16:22:00,762 common.py initialized
+INFO 2016-07-18 16:22:00,763 phrase_cache initialized None
+INFO 2016-07-18 16:22:00,765 view.py initialized
+INFO 2016-07-18 16:22:00,765 BPAppView init
+INFO 2016-07-18 16:22:47,814 roles:[<UserRoleType: SALES_ROLE (销售)>]
+INFO 2016-07-18 16:22:47,833 calling app [home]
+INFO 2016-07-18 16:22:47,833 process home
+INFO 2016-07-18 16:22:47,844 return page: crm/home.html
+INFO 2016-07-18 16:22:47,846 Dispatch app took 0.0195071697235
+INFO 2016-07-18 16:22:47,942 Render response took 0.095752954483
+INFO 2016-07-21 17:32:56,900 common.py initialized
+INFO 2016-07-21 17:32:56,901 phrase_cache initialized None
+INFO 2016-07-21 17:32:56,904 view.py initialized
+INFO 2016-07-21 17:32:56,905 BPAppView init
